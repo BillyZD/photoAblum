@@ -15,10 +15,21 @@ class ZDPhotoAssetMaskView: UIView {
     private let rightBadgValueLab: UILabel = {
         let label = UILabel() ; label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont.systemFont(ofSize: 14)
+        label.backgroundColor = UIColor(hexString: "#FF813B")
         label.textColor = UIColor.white
         label.textAlignment = .center
-        label.backgroundColor = UIColor.black.withAlphaComponent(0.3)
+        label.isHidden = true
+        label.isUserInteractionEnabled = true
+        label.layer.cornerRadius = 11
+        label.layer.masksToBounds = true
         return label
+    }()
+    
+    private let selectImageView: UIImageView = {
+        let imageView = UIImageView(image: "unselect_circle".toImage())
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.isUserInteractionEnabled = true
+        return imageView
     }()
     
     private var tapRightBadgValueHandler: (() -> Void)?
@@ -27,12 +38,15 @@ class ZDPhotoAssetMaskView: UIView {
         super.init(frame: frame)
         self.translatesAutoresizingMaskIntoConstraints = false
         self.backgroundColor = UIColor.white.withAlphaComponent(0)
+        self.addSubview(selectImageView)
         self.addSubview(rightBadgValueLab)
-        let vd: [String: UIView] = ["rightBadgValueLab": rightBadgValueLab]
-        self.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "[rightBadgValueLab(24)]-6-|", options: [], metrics: nil, views: vd))
-        self.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-6-[rightBadgValueLab(24)]", options: [], metrics: nil, views: vd))
-        rightBadgValueLab.isUserInteractionEnabled = true
+        let vd: [String: UIView] = ["rightBadgValueLab": rightBadgValueLab , "selectImageView": selectImageView]
+        self.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "[rightBadgValueLab(22)]-6-|", options: [], metrics: nil, views: vd))
+        self.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "[selectImageView(22)]-6-|", options: [], metrics: nil, views: vd))
+        self.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-6-[rightBadgValueLab(22)]", options: [], metrics: nil, views: vd))
+        self.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-6-[selectImageView(22)]", options: [], metrics: nil, views: vd))
         rightBadgValueLab.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tapRightBadgValue)))
+        selectImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tapRightBadgValue)))
     }
     
     required init?(coder: NSCoder) {
@@ -41,9 +55,14 @@ class ZDPhotoAssetMaskView: UIView {
     
     func setRightBagdValue(_ index: Int?) {
         if let value = index {
+            self.selectImageView.isHidden = true
+            self.rightBadgValueLab.isHidden = false
             self.rightBadgValueLab.text = "\(value)"
+            self.rightBadgValueLab.addScaleBigerAnimation()
         }else {
             self.rightBadgValueLab.text = nil
+            self.rightBadgValueLab.isHidden = true
+            self.selectImageView.isHidden = false
         }
     }
     

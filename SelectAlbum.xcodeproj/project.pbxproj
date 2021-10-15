@@ -31,6 +31,7 @@
 		F47F109C27183F6900A0667B /* Array+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = F47F109B27183F6900A0667B /* Array+Extension.swift */; };
 		F47F109E2719266100A0667B /* ZDPhotoNavigaTitleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F47F109D2719266100A0667B /* ZDPhotoNavigaTitleView.swift */; };
 		F47F10A027192DAB00A0667B /* ZDPhotoAlbumAlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F47F109F27192DAB00A0667B /* ZDPhotoAlbumAlertView.swift */; };
+		F47F10A227199B8A00A0667B /* UIView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = F47F10A127199B8A00A0667B /* UIView+Extension.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -60,6 +61,7 @@
 		F47F109B27183F6900A0667B /* Array+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Extension.swift"; sourceTree = "<group>"; };
 		F47F109D2719266100A0667B /* ZDPhotoNavigaTitleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZDPhotoNavigaTitleView.swift; sourceTree = "<group>"; };
 		F47F109F27192DAB00A0667B /* ZDPhotoAlbumAlertView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZDPhotoAlbumAlertView.swift; sourceTree = "<group>"; };
+		F47F10A127199B8A00A0667B /* UIView+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Extension.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -122,6 +124,7 @@
 				F446D8FD2716C22500FDC317 /* UIColor+Extension.swift */,
 				F47F10992718160400A0667B /* Double+Extension.swift */,
 				F47F109B27183F6900A0667B /* Array+Extension.swift */,
+				F47F10A127199B8A00A0667B /* UIView+Extension.swift */,
 			);
 			path = Catagory;
 			sourceTree = "<group>";
@@ -249,6 +252,7 @@
 				F47F1098271811ED00A0667B /* ZDPhotoBrowerToolView.swift in Sources */,
 				F446D8F52715593200FDC317 /* ZDPhotoInfoModel.swift in Sources */,
 				F446D8F7271588D500FDC317 /* ZDPhotoImageManager.swift in Sources */,
+				F47F10A227199B8A00A0667B /* UIView+Extension.swift in Sources */,
 				F446D9022716E08400FDC317 /* ZDPhotoPreviewController.swift in Sources */,
 				F446D8FE2716C22600FDC317 /* UIColor+Extension.swift in Sources */,
 				F47F109C27183F6900A0667B /* Array+Extension.swift in Sources */,
