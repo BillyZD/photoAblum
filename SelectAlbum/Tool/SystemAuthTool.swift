@@ -9,6 +9,12 @@ import Foundation
 import UIKit
 import Photos
 
+func ZDLog(_ item: Any...) {
+    #if DEBUG
+    debugPrint(item)
+    #endif
+}
+
 /// 授权状态
 enum AuthorizationStatus {
     

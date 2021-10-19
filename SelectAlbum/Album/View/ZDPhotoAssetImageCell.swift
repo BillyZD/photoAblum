@@ -38,6 +38,9 @@ class ZDPhotoAssetImageCell: UICollectionViewCell {
     private func clickSelectedPhoto() {
         let selectIndex = self.selectedHandler?()
         self._maskView.setRightBagdValue(selectIndex)
+        if selectIndex != nil {
+            self._maskView.startSelectAnimation()
+        }
     }
     
 }
@@ -65,7 +68,6 @@ extension ZDPhotoAssetImageCell {
             PHImageManager.default().cancelImageRequest(_imageRequestID)
         }
         self.imageRequestID = imageRequestID
-        self.setShowMaskState(!model.isAllowTap)
         self._maskView.setRightBagdValue(model.selectbadgeValue)
     }
     

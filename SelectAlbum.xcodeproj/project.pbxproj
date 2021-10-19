@@ -26,12 +26,15 @@
 		F446D9002716DA4F00FDC317 /* ZDPhotoAssetMaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F446D8FF2716DA4F00FDC317 /* ZDPhotoAssetMaskView.swift */; };
 		F446D9022716E08400FDC317 /* ZDPhotoPreviewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F446D9012716E08400FDC317 /* ZDPhotoPreviewController.swift */; };
 		F446D9042717C7F300FDC317 /* ZDPhotoAssetPreviewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F446D9032717C7F200FDC317 /* ZDPhotoAssetPreviewCell.swift */; };
-		F47F1098271811ED00A0667B /* ZDPhotoBrowerToolView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F47F1097271811ED00A0667B /* ZDPhotoBrowerToolView.swift */; };
+		F47F1098271811ED00A0667B /* ZDPhotoPreviewToolView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F47F1097271811ED00A0667B /* ZDPhotoPreviewToolView.swift */; };
 		F47F109A2718160400A0667B /* Double+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = F47F10992718160400A0667B /* Double+Extension.swift */; };
 		F47F109C27183F6900A0667B /* Array+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = F47F109B27183F6900A0667B /* Array+Extension.swift */; };
 		F47F109E2719266100A0667B /* ZDPhotoNavigaTitleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F47F109D2719266100A0667B /* ZDPhotoNavigaTitleView.swift */; };
 		F47F10A027192DAB00A0667B /* ZDPhotoAlbumAlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F47F109F27192DAB00A0667B /* ZDPhotoAlbumAlertView.swift */; };
 		F47F10A227199B8A00A0667B /* UIView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = F47F10A127199B8A00A0667B /* UIView+Extension.swift */; };
+		F47F10A4271D1D7400A0667B /* ZDPhotoListToolView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F47F10A3271D1D7400A0667B /* ZDPhotoListToolView.swift */; };
+		F47F10AC271D63DC00A0667B /* YYFPSLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = F47F10A8271D63DC00A0667B /* YYFPSLabel.m */; };
+		F47F10AD271D63DC00A0667B /* YYWeakProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = F47F10AA271D63DC00A0667B /* YYWeakProxy.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -56,12 +59,18 @@
 		F446D8FF2716DA4F00FDC317 /* ZDPhotoAssetMaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZDPhotoAssetMaskView.swift; sourceTree = "<group>"; };
 		F446D9012716E08400FDC317 /* ZDPhotoPreviewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZDPhotoPreviewController.swift; sourceTree = "<group>"; };
 		F446D9032717C7F200FDC317 /* ZDPhotoAssetPreviewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZDPhotoAssetPreviewCell.swift; sourceTree = "<group>"; };
-		F47F1097271811ED00A0667B /* ZDPhotoBrowerToolView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZDPhotoBrowerToolView.swift; sourceTree = "<group>"; };
+		F47F1097271811ED00A0667B /* ZDPhotoPreviewToolView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZDPhotoPreviewToolView.swift; sourceTree = "<group>"; };
 		F47F10992718160400A0667B /* Double+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Double+Extension.swift"; sourceTree = "<group>"; };
 		F47F109B27183F6900A0667B /* Array+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Extension.swift"; sourceTree = "<group>"; };
 		F47F109D2719266100A0667B /* ZDPhotoNavigaTitleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZDPhotoNavigaTitleView.swift; sourceTree = "<group>"; };
 		F47F109F27192DAB00A0667B /* ZDPhotoAlbumAlertView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZDPhotoAlbumAlertView.swift; sourceTree = "<group>"; };
 		F47F10A127199B8A00A0667B /* UIView+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Extension.swift"; sourceTree = "<group>"; };
+		F47F10A3271D1D7400A0667B /* ZDPhotoListToolView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZDPhotoListToolView.swift; sourceTree = "<group>"; };
+		F47F10A7271D63DB00A0667B /* SelectAlbum-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SelectAlbum-Bridging-Header.h"; sourceTree = "<group>"; };
+		F47F10A8271D63DC00A0667B /* YYFPSLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YYFPSLabel.m; sourceTree = "<group>"; };
+		F47F10A9271D63DC00A0667B /* YYFPSLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YYFPSLabel.h; sourceTree = "<group>"; };
+		F47F10AA271D63DC00A0667B /* YYWeakProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YYWeakProxy.m; sourceTree = "<group>"; };
+		F47F10AB271D63DC00A0667B /* YYWeakProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YYWeakProxy.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -99,9 +108,14 @@
 				F446D8E12715232700FDC317 /* Tool */,
 				F446D8CD2714260700FDC317 /* AppDelegate.swift */,
 				F446D8D12714260700FDC317 /* ViewController.swift */,
+				F47F10A9271D63DC00A0667B /* YYFPSLabel.h */,
+				F47F10A8271D63DC00A0667B /* YYFPSLabel.m */,
+				F47F10AB271D63DC00A0667B /* YYWeakProxy.h */,
+				F47F10AA271D63DC00A0667B /* YYWeakProxy.m */,
 				F446D8D62714260900FDC317 /* Assets.xcassets */,
 				F446D8D82714260900FDC317 /* LaunchScreen.storyboard */,
 				F446D8DB2714260900FDC317 /* Info.plist */,
+				F47F10A7271D63DB00A0667B /* SelectAlbum-Bridging-Header.h */,
 			);
 			path = SelectAlbum;
 			sourceTree = "<group>";
@@ -165,7 +179,8 @@
 				F446D8FB27159FDE00FDC317 /* ZDPhotoAssetImageCell.swift */,
 				F446D9032717C7F200FDC317 /* ZDPhotoAssetPreviewCell.swift */,
 				F446D8FF2716DA4F00FDC317 /* ZDPhotoAssetMaskView.swift */,
-				F47F1097271811ED00A0667B /* ZDPhotoBrowerToolView.swift */,
+				F47F10A3271D1D7400A0667B /* ZDPhotoListToolView.swift */,
+				F47F1097271811ED00A0667B /* ZDPhotoPreviewToolView.swift */,
 				F47F109D2719266100A0667B /* ZDPhotoNavigaTitleView.swift */,
 				F47F109F27192DAB00A0667B /* ZDPhotoAlbumAlertView.swift */,
 			);
@@ -204,6 +219,7 @@
 				TargetAttributes = {
 					F446D8C92714260700FDC317 = {
 						CreatedOnToolsVersion = 13.0;
+						LastSwiftMigration = 1300;
 					};
 				};
 			};
@@ -248,8 +264,9 @@
 				F446D8EE2715372E00FDC317 /* ZDNavigationController.swift in Sources */,
 				F446D9042717C7F300FDC317 /* ZDPhotoAssetPreviewCell.swift in Sources */,
 				F446D8F9271598ED00FDC317 /* UIImage+Extension.swift in Sources */,
+				F47F10AC271D63DC00A0667B /* YYFPSLabel.m in Sources */,
 				F446D8E627152DE500FDC317 /* UIDevice+Extension.swift in Sources */,
-				F47F1098271811ED00A0667B /* ZDPhotoBrowerToolView.swift in Sources */,
+				F47F1098271811ED00A0667B /* ZDPhotoPreviewToolView.swift in Sources */,
 				F446D8F52715593200FDC317 /* ZDPhotoInfoModel.swift in Sources */,
 				F446D8F7271588D500FDC317 /* ZDPhotoImageManager.swift in Sources */,
 				F47F10A227199B8A00A0667B /* UIView+Extension.swift in Sources */,
@@ -259,7 +276,9 @@
 				F47F109A2718160400A0667B /* Double+Extension.swift in Sources */,
 				F446D8EC271536CD00FDC317 /* ZDPhotoListController.swift in Sources */,
 				F47F10A027192DAB00A0667B /* ZDPhotoAlbumAlertView.swift in Sources */,
+				F47F10A4271D1D7400A0667B /* ZDPhotoListToolView.swift in Sources */,
 				F446D8F3271556F200FDC317 /* ZDPhotoAlbumManager.swift in Sources */,
+				F47F10AD271D63DC00A0667B /* YYWeakProxy.m in Sources */,
 				F446D8E32715234400FDC317 /* SystemAuthTool.swift in Sources */,
 				F446D9002716DA4F00FDC317 /* ZDPhotoAssetMaskView.swift in Sources */,
 				F446D8E827152F9A00FDC317 /* String+Extension.swift in Sources */,
@@ -403,6 +422,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = AFHDP3W87D;
@@ -422,6 +442,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = zhang.SelectAlbum;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "SelectAlbum/SelectAlbum-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
@@ -432,6 +454,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = AFHDP3W87D;
@@ -451,6 +474,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = zhang.SelectAlbum;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "SelectAlbum/SelectAlbum-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};

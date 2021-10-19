@@ -24,4 +24,19 @@ extension UIView {
         }
     }
     
+    func drawCirleImage(_ radius: CGFloat) -> UIImage? {
+        guard radius > 0 else {  return nil }
+        let size = self.bounds.size
+        UIGraphicsBeginImageContextWithOptions(size, false, UIScreen.main.scale)
+        if let context = UIGraphicsGetCurrentContext() {
+            context.addPath(UIBezierPath(roundedRect: self.bounds, cornerRadius: radius).cgPath)
+            context.clip()
+            self.layer.render(in: context)
+            let image = UIGraphicsGetImageFromCurrentImageContext()
+            UIGraphicsEndImageContext()
+            return image
+        }
+        return nil
+    }
+    
 }

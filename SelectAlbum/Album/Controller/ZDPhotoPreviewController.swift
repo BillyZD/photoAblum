@@ -7,10 +7,30 @@
 
 import UIKit
 
+/// 预览界面事件回调
+protocol SHPhotoPreviewDelegate: AnyObject {
+    
+    /// 开始选择照片
+    /// - Parameters:
+    ///   - row: 数据源中，原列表中的下标'ZDPhotoInfoModel中的row'
+    /// - Returns: 返回选择照片结果
+    func startsSelectPhoto(_ row: Int) -> ZDSelectPhotoResult
+    
+    
+    /// 设置完成按钮的状态
+    func setCompleteState() -> Bool
+    
+    /// 点击完成事件
+    func completeSelectPhoto()
+    
+}
+
 /**
  *  相册图片大图预览
  */
 class ZDPhotoPreviewController: UIViewController {
+    
+    weak var delegate: SHPhotoPreviewDelegate?
     
     override var prefersStatusBarHidden: Bool { return true }
     
@@ -18,13 +38,13 @@ class ZDPhotoPreviewController: UIViewController {
     
     private var currentIndex: Int = 0 {
         didSet{
+            if self.currentIndex < 0 { self.currentIndex = 0 ; return}
             self.changedCurrentIndex()
         }
     }
     
     private let _layout = UICollectionViewFlowLayout()
-
-
+    
     private lazy var collectionView: UICollectionView = {
         _layout.scrollDirection = .horizontal
         let collec = UICollectionView(frame: CGRect.zero, collectionViewLayout: _layout)
@@ -39,12 +59,13 @@ class ZDPhotoPreviewController: UIViewController {
         return collec
     }()
     
-    private let bottomToolView = ZDPhotoBrowerBottomView()
+    private let bottomToolView = ZDPhotoPreviewBottomView()
     
-    private let topToolView = ZDPhotoBrowerTopView()
+    private let topToolView = ZDPhotoPreviewTopView()
     
-    init(_ photoArr: [ZDPhotoInfoModel]) {
+    init(_ photoArr: [ZDPhotoInfoModel] , _ index: Int) {
         self.photoModelArr = photoArr
+        self.currentIndex = index
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -65,6 +86,9 @@ class ZDPhotoPreviewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.navigationController?.setNavigationBarHidden(true, animated: animated)
+        if self.currentIndex >= 0 , self.currentIndex < photoModelArr.count {
+            collectionView.setContentOffset(CGPoint(x: (self.view.frame.size.width + 20) * CGFloat(currentIndex), y: 0), animated: false)
+        }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -85,23 +109,30 @@ class ZDPhotoPreviewController: UIViewController {
 // MARK: - logic API
 extension ZDPhotoPreviewController {
     
-    func setViewBlock() {
+    private func setViewBlock() {
         
         self.topToolView.handleBackAction { [weak self] actionType in
+            self?.handleToolAction(actionType)
+        }
+        
+        self.topToolView.handleSelectPhotoAction { [weak self] actionType in
             self?.handleToolAction(actionType)
         }
         
         self.bottomToolView.handleCompleteAction { [weak self] actionType in
             self?.handleToolAction(actionType)
         }
+        
     }
     
-    /// 处理滑动切换
-    func changedCurrentIndex() {
+    /// 处理照片预览切换
+    private func changedCurrentIndex() {
         guard self.currentIndex >= 0 , self.currentIndex < photoModelArr.count else { return }
         photoModelArr[currentIndex].getOrginImageByte { [weak self] byteCount in
             self?.bottomToolView.setOriginByte(byteCount)
         }
+        // 设置角标
+        self.topToolView.setRightBadgValue(photoModelArr[currentIndex].selectbadgeValue)
     }
     
     /// 处理tool交互事件
@@ -110,9 +141,9 @@ extension ZDPhotoPreviewController {
         case .back:
             self.navigationController?.popViewController(animated: true)
         case .completed:
-            "点击完成".showToWindow()
+            self.delegate?.completeSelectPhoto()
         case .selected:
-            "点击选择/取消".showToWindow()
+            self.handleSelectPhotoAction()
         }
     }
     
@@ -123,14 +154,26 @@ extension ZDPhotoPreviewController {
         self.bottomToolView.isHidden = !_hidden
     }
     
+    /// 处理选择照片事件
+    private func handleSelectPhotoAction() {
+        guard self.currentIndex >= 0 , self.currentIndex < photoModelArr.count else { return }
+        if let result = self.delegate?.startsSelectPhoto(self.photoModelArr[currentIndex].row){
+            switch result {
+            case .success(let value):
+                self.photoModelArr[currentIndex].selectbadgeValue = value
+                // 更新角标
+                self.topToolView.setRightBadgValue(value , true)
+            case .faled(let err):
+                err.showToWindow()
+            }
+        }
+        self.bottomToolView.isAbleComplete(self.delegate?.setCompleteState() ?? false)
+    }
+    
 }
 
 
 extension ZDPhotoPreviewController: UICollectionViewDelegate , UICollectionViewDataSource {
-    
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        self.handleSingTap()
-    }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return photoModelArr.count
@@ -139,6 +182,9 @@ extension ZDPhotoPreviewController: UICollectionViewDelegate , UICollectionViewD
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ZDPhotoAssetPreviewCell", for: indexPath) as! ZDPhotoAssetPreviewCell
         cell.updateCell(photoModelArr[indexPath.row])
+        cell.handleSingleTap { [weak self] in
+            self?.handleSingTap()
+        }
         return cell
     }
     
@@ -162,9 +208,11 @@ extension ZDPhotoPreviewController {
         } else {
             self.automaticallyAdjustsScrollViewInsets = false
         }
+        self.collectionView.contentSize.width = CGFloat(self.view.frame.size.width + 20) * CGFloat(photoModelArr.count)
         self.view.addSubview(self.collectionView)
         self.collectionView.reloadData()
         self.changedCurrentIndex()
+        self.bottomToolView.isAbleComplete(self.delegate?.setCompleteState() ?? false)
         self.view.addSubview(bottomToolView)
         self.view.addSubview(topToolView)
         let vd: [String: UIView] = ["bottomToolView": bottomToolView , "topToolView": topToolView]

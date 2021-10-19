@@ -13,10 +13,6 @@ import Photos
  */
 struct ZDPhotoInfoModel: Equatable {
     
-    /// 是否允许被点击
-    var isAllowTap: Bool = true
-    
-    /// 是否被选中
     private (set) var isSelectedState: Bool = false
 
     /// 选中的角标,nil,或者小于0未选中

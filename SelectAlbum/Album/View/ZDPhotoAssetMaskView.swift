@@ -22,6 +22,7 @@ class ZDPhotoAssetMaskView: UIView {
         label.isUserInteractionEnabled = true
         label.layer.cornerRadius = 11
         label.layer.masksToBounds = true
+        label.bounds = CGRect(x: 0, y: 0, width: 22, height: 22)
         return label
     }()
     
@@ -55,15 +56,18 @@ class ZDPhotoAssetMaskView: UIView {
     
     func setRightBagdValue(_ index: Int?) {
         if let value = index {
-            self.selectImageView.isHidden = true
             self.rightBadgValueLab.isHidden = false
+            self.selectImageView.isHidden = true
             self.rightBadgValueLab.text = "\(value)"
-            self.rightBadgValueLab.addScaleBigerAnimation()
         }else {
             self.rightBadgValueLab.text = nil
             self.rightBadgValueLab.isHidden = true
             self.selectImageView.isHidden = false
         }
+    }
+    
+    func startSelectAnimation() {
+        self.rightBadgValueLab.addScaleBigerAnimation()
     }
     
     func handleTapRightBadgValue(handler: (() -> Void)?) {

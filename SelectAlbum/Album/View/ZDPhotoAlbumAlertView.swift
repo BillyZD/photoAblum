@@ -45,8 +45,17 @@ class ZDPhotoAlbumAlertView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        if let point = touches.first?.location(in: self) {
+            let convertPoint = self.convert(point, to: self.tableView)
+            if !self.tableView.bounds.contains(convertPoint) {
+                selectIndexHandler?(self.selectIndex)
+            }
+        }
+    }
+    
     deinit{
-        debugPrint("deint: ZDPhotoAlbumAlertView")
+        ZDLog("deint: ZDPhotoAlbumAlertView")
     }
     
 }

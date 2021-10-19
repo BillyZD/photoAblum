@@ -81,12 +81,12 @@ extension ZDPhotoImageManager {
             // 判断是否需要从iCloud下载
             if networkAccessAllowed , result == nil , info?[PHImageResultIsInCloudKey] != nil {
                 self.getOriginImageData(asset) { data, dataUTI, orientation, info in
-                    let iCloudFailed = self.isICloudSyncError(info?[PHImageErrorKey]  as? NSError)
+                    let isCloudFailed = self.isICloudSyncError(info?[PHImageErrorKey]  as? NSError)
                     if let imageData = data {
                         let image = UIImage(data: imageData)
-                        complete?(image?.scaleImage(size: size) , false , iCloudFailed)
+                        complete?(image?.scaleImage(size: size) , false , isCloudFailed)
                     }else {
-                        complete?(result , false , iCloudFailed)
+                        complete?(result , false , isCloudFailed)
                     }
                 } progressHandler: { progress, err, stop, info in
                     DispatchQueue.main.async {

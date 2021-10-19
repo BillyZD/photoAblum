@@ -10,6 +10,14 @@ import UIKit
 
 extension String {
     
+    func toImage() -> UIImage? {
+        return UIImage(named: self)
+    }
+
+}
+
+extension String {
+    
     private var flagTag: Int {
         return 4288764
     }
@@ -47,10 +55,6 @@ extension String {
             }
         }
         
-    }
-    
-    func toImage() -> UIImage? {
-        return UIImage(named: self)
     }
     
 }

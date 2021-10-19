@@ -119,7 +119,7 @@ extension ZDPhotoAlbumManager {
                 func filterCollection(_ collection: PHAssetCollection) {
                     if collection.estimatedAssetCount > 0{
                         if collection.assetCollectionSubtype.rawValue == 1000000201 {
-                            debugPrint("过滤最近删除相册")
+                            ZDLog("过滤最近删除相册")
                         }else {
                             if collection.assetCollectionSubtype == PHAssetCollectionSubtype.smartAlbumUserLibrary {
                                 tempArr.insert(ZDAlbumModel(collection: collection), at: 0)

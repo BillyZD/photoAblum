@@ -10,7 +10,7 @@ import UIKit
 extension UIImage {
     
     /// 获取指定大小的图片
-    func scaleImage( size to: CGSize) -> UIImage? {
+    func scaleImage(size to: CGSize) -> UIImage? {
         if self.size.width > size.width {
             UIGraphicsBeginImageContext(size)
             self.draw(in: CGRect(origin: CGPoint.zero, size: size))
