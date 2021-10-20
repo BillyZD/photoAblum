@@ -35,6 +35,8 @@
 		F47F10A4271D1D7400A0667B /* ZDPhotoListToolView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F47F10A3271D1D7400A0667B /* ZDPhotoListToolView.swift */; };
 		F47F10AC271D63DC00A0667B /* YYFPSLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = F47F10A8271D63DC00A0667B /* YYFPSLabel.m */; };
 		F47F10AD271D63DC00A0667B /* YYWeakProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = F47F10AA271D63DC00A0667B /* YYWeakProxy.m */; };
+		F47F10AF271EE54A00A0667B /* ZDPhotoRequestOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = F47F10AE271EE54A00A0667B /* ZDPhotoRequestOperation.swift */; };
+		F47F10B1271FF9F000A0667B /* ZDPhotoSelectModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F47F10B0271FF9F000A0667B /* ZDPhotoSelectModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -71,6 +73,8 @@
 		F47F10A9271D63DC00A0667B /* YYFPSLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YYFPSLabel.h; sourceTree = "<group>"; };
 		F47F10AA271D63DC00A0667B /* YYWeakProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YYWeakProxy.m; sourceTree = "<group>"; };
 		F47F10AB271D63DC00A0667B /* YYWeakProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YYWeakProxy.h; sourceTree = "<group>"; };
+		F47F10AE271EE54A00A0667B /* ZDPhotoRequestOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZDPhotoRequestOperation.swift; sourceTree = "<group>"; };
+		F47F10B0271FF9F000A0667B /* ZDPhotoSelectModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZDPhotoSelectModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -169,6 +173,8 @@
 				F446D8F2271556F200FDC317 /* ZDPhotoAlbumManager.swift */,
 				F446D8F42715593200FDC317 /* ZDPhotoInfoModel.swift */,
 				F446D8F6271588D500FDC317 /* ZDPhotoImageManager.swift */,
+				F47F10AE271EE54A00A0667B /* ZDPhotoRequestOperation.swift */,
+				F47F10B0271FF9F000A0667B /* ZDPhotoSelectModel.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -270,6 +276,7 @@
 				F446D8F52715593200FDC317 /* ZDPhotoInfoModel.swift in Sources */,
 				F446D8F7271588D500FDC317 /* ZDPhotoImageManager.swift in Sources */,
 				F47F10A227199B8A00A0667B /* UIView+Extension.swift in Sources */,
+				F47F10B1271FF9F000A0667B /* ZDPhotoSelectModel.swift in Sources */,
 				F446D9022716E08400FDC317 /* ZDPhotoPreviewController.swift in Sources */,
 				F446D8FE2716C22600FDC317 /* UIColor+Extension.swift in Sources */,
 				F47F109C27183F6900A0667B /* Array+Extension.swift in Sources */,
@@ -278,6 +285,7 @@
 				F47F10A027192DAB00A0667B /* ZDPhotoAlbumAlertView.swift in Sources */,
 				F47F10A4271D1D7400A0667B /* ZDPhotoListToolView.swift in Sources */,
 				F446D8F3271556F200FDC317 /* ZDPhotoAlbumManager.swift in Sources */,
+				F47F10AF271EE54A00A0667B /* ZDPhotoRequestOperation.swift in Sources */,
 				F47F10AD271D63DC00A0667B /* YYWeakProxy.m in Sources */,
 				F446D8E32715234400FDC317 /* SystemAuthTool.swift in Sources */,
 				F446D9002716DA4F00FDC317 /* ZDPhotoAssetMaskView.swift in Sources */,

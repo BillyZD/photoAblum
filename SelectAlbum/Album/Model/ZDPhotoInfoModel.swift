@@ -37,6 +37,10 @@ struct ZDPhotoInfoModel: Equatable {
         ZDPhotoImageManager.getOriginImageByte(self.asset, completeHandler: completeHandler)
     }
     
+    func requestImageOperation(complete: ((ZDPhotoOperateionResult) -> Void)?) -> Operation {
+        return ZDPhotoRequestOperation(self.asset, completeHandler: complete)
+    }
+    
     static func == (lhs: ZDPhotoInfoModel, rhs: ZDPhotoInfoModel) -> Bool {
         return lhs.asset.localIdentifier == rhs.asset.localIdentifier
     }

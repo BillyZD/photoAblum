@@ -8,8 +8,6 @@
 import UIKit
 import Photos
 
-
-
 /// 选择相片的结果回调
 enum ZDSelectPhotoResult{
     
@@ -22,6 +20,8 @@ enum ZDSelectPhotoResult{
  *  相册列表界面
  */
 class ZDPhotoListController: UIViewController , PHPhotoLibraryChangeObserver {
+    
+    weak var delegate: ZDSelectProtocolDelegate?
     
     struct ZDAlbumDataModel{
         
@@ -43,8 +43,6 @@ class ZDPhotoListController: UIViewController , PHPhotoLibraryChangeObserver {
             self.albumListArr = data
         }
     }
-    
-    private var selectedMaxCount: Int = 9
     
     private var dataModel: ZDAlbumDataModel = ZDAlbumDataModel()
     
@@ -75,6 +73,11 @@ class ZDPhotoListController: UIViewController , PHPhotoLibraryChangeObserver {
     }()
     
     private let boottomToolView: ZDPhotoListBottomView = ZDPhotoListBottomView()
+    
+    
+    
+    /// 获取图片队列
+    private lazy var operationQueue: OperationQueue = OperationQueue()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -216,7 +219,27 @@ extension ZDPhotoListController {
     
     /// 选择完成
     private func handleSelectComplete() {
-        "完成".showToWindow()
+        self.navigationController?.dismiss(animated: true, completion: nil)
+        self.delegate?.selectPHAssetsComplete(assets: self.selectPhotoArr.map({return $0.asset}))
+        self.operationQueue.maxConcurrentOperationCount = 3
+        var tempArr: [UIImage?] = Array(repeating: nil, count: selectPhotoArr.count)
+        for i in 0 ..< self.selectPhotoArr.count {
+            let operation = selectPhotoArr[i].requestImageOperation { [weak self] result in
+                switch result {
+                case .success(let image):
+                    tempArr[i] = image
+                    if tempArr.count == tempArr.compactMap({return $0}).count {
+                        self?.delegate?.selectPhotosComplete(phtots: tempArr.compactMap({return $0}))
+                    }
+                case .failed(let err):
+                    err.showToWindow()
+                    tempArr.remove(at: i)
+                case .preogress(let progress):
+                    ZDLog(progress)
+                }
+            }
+            self.operationQueue.addOperation(operation)
+        }
     }
     
     @objc private func cancleSelectAction() {
@@ -231,6 +254,9 @@ extension ZDPhotoListController {
     
     /// 处理点击选中/取消照片事件
     private func handleSelectedPhoto(_ row: Int) -> ZDSelectPhotoResult {
+        guard self.delegate?.selectMaxCount ?? 0 > 0 else {
+            return ZDSelectPhotoResult.faled("不能选择照片")
+        }
         if let model = self.currentAblum?.assetArr.safeIndex(row){
             if model.isSelectedState {
                 // 取消选中
@@ -255,7 +281,7 @@ extension ZDPhotoListController {
                 self.setBottomToolState()
                 return ZDSelectPhotoResult.success(self.selectPhotoArr.count)
             }else {
-                return ZDSelectPhotoResult.faled("最多只能选择\(selectedMaxCount)张照片")
+                return ZDSelectPhotoResult.faled("最多只能选择\(self.delegate?.selectMaxCount ?? 0)张照片")
             }
         }
         self.setBottomToolState()
@@ -264,12 +290,12 @@ extension ZDPhotoListController {
     
     /// 判断是否允许被选中
     private func isAllowSelected() -> Bool {
-        return self.selectedMaxCount > self.selectPhotoArr.count
+        return self.delegate?.selectMaxCount ?? 0 > self.selectPhotoArr.count
     }
     
     /// 判断并设置选满状态
     private func setSelectedFullState() {
-        if self.selectedMaxCount == self.selectPhotoArr.count {
+        if self.delegate?.selectMaxCount ?? 0 == self.selectPhotoArr.count {
             self.dataModel.isAllowTapUnSelectPhoto = false
             // 设置可见cell的蒙层状态
             if let cells = self.collectionView.visibleCells as? [ZDPhotoAssetImageCell] {
@@ -348,7 +374,7 @@ extension ZDPhotoListController {
     }
 }
 
-
+//MARK: - 预览界面代理事件回调
 extension ZDPhotoListController: SHPhotoPreviewDelegate {
     
     func startsSelectPhoto(_ row: Int) -> ZDSelectPhotoResult {
@@ -366,7 +392,6 @@ extension ZDPhotoListController: SHPhotoPreviewDelegate {
     }
     
     func completeSelectPhoto() {
-        self.navigationController?.popToViewController(self, animated: true)
         self.handleSelectComplete()
     }
     

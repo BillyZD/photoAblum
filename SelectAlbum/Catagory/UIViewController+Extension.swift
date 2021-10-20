@@ -10,9 +10,11 @@ import UIKit
 extension UIViewController {
     
     /// 显示相册列表界面
-    func presentPhotoList() {
+    func presentPhotoList(_ delegate: ZDSelectProtocolDelegate?) {
         guard (self is ZDPhotoListController) == false else { return }
-        let nav = ZDNavigationController(rootViewController: ZDPhotoListController())
+        let photoListVC = ZDPhotoListController()
+        photoListVC.delegate = delegate
+        let nav = ZDNavigationController(rootViewController: photoListVC)
         nav.modalPresentationStyle = .fullScreen
         self.present(nav, animated: true, completion: nil)
     }

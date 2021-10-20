@@ -13,19 +13,55 @@ import Photos
  */
 struct ZDPhotoImageManager {
     
-    static var ZDScreenScale: CGFloat = 2.0
+    /// @2x
+    static var ZDScreenScale: CGFloat{
+        if UIDevice.APPSCREENWIDTH > 700 {
+            return 1.5
+        }
+        return 2.0
+    }
     
+    /// 预览图片最大宽度
+    static var previewMaxWidth: CGFloat = 600 {
+        didSet{
+            if previewMaxWidth <= 0 {
+                previewMaxWidth = 600
+            }
+        }
+    }
+    
+    /// 是否返回原图
+    static var isAllowOriginPhoto: Bool = false
 }
 
 // MARK: - public API
 extension ZDPhotoImageManager {
+    
+    /// 获取选取的图片
+    static func getSelectPhotoImage(_ asset: PHAsset , complete:((UIImage) -> Void)? , progressHandler:((Double) -> Void)?, failed: ((String) -> Void)?) {
+        self.requestPreviewImage(asset) { image, isDegraded, isCloudFailed in
+            if !isDegraded , let _image = image {
+                complete?(_image)
+            }
+            if isCloudFailed , image == nil { failed?("iClound下载失败")}
+        } progressHandler: { progress, err in
+            if err != nil {
+                failed?(err!.localizedDescription)
+            }
+            progressHandler?(progress)
+        }
+    }
     
     /// 获取预览图片
     @discardableResult
     static func requestPreviewImage(_ asset: PHAsset ,
                                     complete: ((_ image: UIImage? , _ isDegraded: Bool , _ isCloudFailed: Bool) -> Void)?,
                                     progressHandler:((Double , Error?) -> Void)? = nil) -> PHImageRequestID{
-        var pixelWidth = UIDevice.APPSCREENWIDTH * ZDScreenScale
+        var photoWidth = UIDevice.APPSCREENWIDTH
+        if photoWidth > previewMaxWidth {
+            photoWidth = previewMaxWidth
+        }
+        var pixelWidth = photoWidth * ZDScreenScale
         let aspectRatio: CGFloat = CGFloat(asset.pixelWidth)/CGFloat(asset.pixelHeight)
         // 超宽图片
         if aspectRatio > 1.8 {
@@ -97,7 +133,7 @@ extension ZDPhotoImageManager {
         }
     }
     
-    /// 获取data
+    /// 获取原图data
     static func getOriginImageData(_ asset: PHAsset ,resultHandler: @escaping (Data?, String?, CGImagePropertyOrientation, [AnyHashable : Any]?) -> Void , progressHandler: ((Double, Error?, UnsafeMutablePointer<ObjCBool>, [AnyHashable : Any]?) -> Void)?) {
         let downOption = PHImageRequestOptions()
         downOption.resizeMode = .fast
