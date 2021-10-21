@@ -152,9 +152,18 @@ extension ZDPhotoPreviewController {
         if let result = self.delegate?.startsSelectPhoto(self.photoModelArr[currentIndex].row){
             switch result {
             case .success(let value):
+                let oldValue = self.photoModelArr[currentIndex].selectbadgeValue
                 self.photoModelArr[currentIndex].selectbadgeValue = value
                 // 更新角标
                 self.topToolView.setRightBadgValue(value , true)
+                if value == nil , let _oldValue = oldValue{
+                    // 取消，更新数据源
+                    for i in 0 ..< self.photoModelArr.count {
+                        if let currentValue = self.photoModelArr[i].selectbadgeValue , currentValue > _oldValue {
+                            self.photoModelArr[i].selectbadgeValue = currentValue - 1
+                        }
+                    }
+                }
             case .faled(let err):
                 err.showToWindow()
             }
