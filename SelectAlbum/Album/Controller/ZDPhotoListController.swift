@@ -74,8 +74,6 @@ class ZDPhotoListController: UIViewController , PHPhotoLibraryChangeObserver {
     
     private let boottomToolView: ZDPhotoListBottomView = ZDPhotoListBottomView()
     
-    
-    
     /// 获取图片队列
     private lazy var operationQueue: OperationQueue = OperationQueue()
     
@@ -482,6 +480,11 @@ extension ZDPhotoListController {
 extension ZDPhotoListController {
     
     private func configMainUI() {
+        if #available(iOS 11.0, *) {
+            self.collectionView.contentInsetAdjustmentBehavior = .never
+        } else {
+            self.automaticallyAdjustsScrollViewInsets = false
+        }
         self.navigationItem.titleView = self.navBarView
         self.view.addSubview(self.collectionView)
         self.view.addSubview(self.boottomToolView)

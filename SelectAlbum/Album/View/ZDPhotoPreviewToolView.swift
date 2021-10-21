@@ -7,7 +7,7 @@
 
 import UIKit
 
-enum ZDBrowerToolActionType{
+enum ZDPreviewToolActionType{
     case back , completed , selected
 }
 
@@ -34,7 +34,7 @@ class ZDPhotoPreviewBottomView: UIView {
         return button
     }()
     
-    private var completeHandler: ((ZDBrowerToolActionType) -> Void)?
+    private var completeHandler: ((ZDPreviewToolActionType) -> Void)?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -66,7 +66,7 @@ extension ZDPhotoPreviewBottomView {
         self.completeButton.backgroundColor =  isEnabled ? UIColor(hexString: "#FF813B") : UIColor(hexString: "#999999")
     }
     
-    func handleCompleteAction(handler: ((ZDBrowerToolActionType) -> Void)?) {
+    func handleCompleteAction(handler: ((ZDPreviewToolActionType) -> Void)?) {
         self.completeHandler = handler
     }
 }
@@ -117,9 +117,9 @@ class ZDPhotoPreviewTopView: UIView {
         return button
     }()
     
-    private var backHandler: ((ZDBrowerToolActionType) -> Void)?
+    private var backHandler: ((ZDPreviewToolActionType) -> Void)?
     
-    private var tapRightBadgValueHandler: ((ZDBrowerToolActionType) -> Void)?
+    private var tapRightBadgValueHandler: ((ZDPreviewToolActionType) -> Void)?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -144,11 +144,11 @@ class ZDPhotoPreviewTopView: UIView {
 //MARK: - public API
 extension ZDPhotoPreviewTopView {
     
-    func handleBackAction(handler: ((ZDBrowerToolActionType) -> Void)?) {
+    func handleBackAction(handler: ((ZDPreviewToolActionType) -> Void)?) {
         self.backHandler = handler
     }
     
-    func handleSelectPhotoAction(handler: ((ZDBrowerToolActionType) -> Void)?){
+    func handleSelectPhotoAction(handler: ((ZDPreviewToolActionType) -> Void)?){
         self.tapRightBadgValueHandler = handler
     }
     

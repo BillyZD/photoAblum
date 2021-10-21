@@ -55,6 +55,13 @@ class ZDPhotoRequestOperation: Operation {
         self._executing = false
     }
     
+    
+    override var isExecuting: Bool { return self._executing}
+    
+    override var isFinished: Bool { return self._finished}
+    
+    override var isAsynchronous: Bool { return true }
+    
     override func start() {
         _executing = true
         guard let _asset = self.asset else {

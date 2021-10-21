@@ -12,6 +12,10 @@ import Photos
 class ViewController: UIViewController {
     
     let lab = YYFPSLabel(frame: CGRect(x: 300, y: 40, width: 60, height: 30))
+    
+    private let presentAnimation = ZDPresentAnimationModel()
+    
+    private let imageView = UIImageView()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -19,11 +23,21 @@ class ViewController: UIViewController {
         self.view.backgroundColor = UIColor.white
         // Do any additional setup after loading the view.
         let button = UIButton(type: .custom)
+        button.setTitle("选择照片", for: .normal)
+        button.setTitleColor(UIColor(hexString: "#333333"), for: .normal)
         self.view.addSubview(button)
-        button.frame = CGRect(x: 100, y: 100, width: 40, height: 40)
+        button.frame = CGRect(x: 100, y: 100, width: 100, height: 40)
         button.addTarget(self, action: #selector(clickSelectPhoto), for: .touchUpInside)
         
-       
+        imageView.frame = CGRect(x: 0, y: 200, width: 200, height: 200)
+        imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
+        self.view.addSubview(imageView)
+        if let path = Bundle.main.path(forResource: "test", ofType: "jpg") {
+            imageView.image = UIImage(contentsOfFile: path)
+        }
+        imageView.isUserInteractionEnabled = true
+        imageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tapImageView)))
         
     }
     
@@ -33,8 +47,13 @@ class ViewController: UIViewController {
             UIDevice.APPWINDOW.bringSubviewToFront(self.lab)
         }
     }
-
+    
+    
+    @objc private func tapImageView() {
+        
+    }
 }
+
 
 extension ViewController: ZDSelectProtocolDelegate {
     
@@ -42,13 +61,20 @@ extension ViewController: ZDSelectProtocolDelegate {
        return 9
     }
     
-   
     func selectPhotosComplete(phtots: [UIImage]) {
-        ZDLog(phtots)
         phtots.forEach { image in
             if let data = image.jpegData(compressionQuality: 1.0) {
                 debugPrint(Double(data.count).getByteCountText())
             }
         }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            let convertRect = self.view.convert(self.imageView.frame, to: UIDevice.APPWINDOW)
+            let browerController = ZDImageBrowerController(phtots, startIndex: 0) { _ in
+                return convertRect
+            }
+            browerController.showImageBrower(self, startRect: convertRect)
+        }
     }
 }
+
+

@@ -96,14 +96,6 @@ class ZDPhotoPreviewController: UIViewController {
         self.navigationController?.setNavigationBarHidden(false, animated: animated)
     }
     
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        collectionView.frame = CGRect(x: -10, y: 0, width: self.view.frame.size.width + 20, height: self.view.frame.size.height)
-        _layout.itemSize = CGSize(width: self.view.frame.size.width + 20, height: self.view.frame.size.height);
-        _layout.minimumInteritemSpacing = 0;
-        _layout.minimumLineSpacing = 0;
-    }
-    
 }
 
 // MARK: - logic API
@@ -136,7 +128,7 @@ extension ZDPhotoPreviewController {
     }
     
     /// 处理tool交互事件
-    private func handleToolAction(_ actionType: ZDBrowerToolActionType) {
+    private func handleToolAction(_ actionType: ZDPreviewToolActionType) {
         switch actionType {
         case .back:
             self.navigationController?.popViewController(animated: true)
@@ -210,6 +202,10 @@ extension ZDPhotoPreviewController {
         }
         self.collectionView.contentSize.width = CGFloat(self.view.frame.size.width + 20) * CGFloat(photoModelArr.count)
         self.view.addSubview(self.collectionView)
+        collectionView.frame = CGRect(x: -10, y: 0, width: self.view.frame.size.width + 20, height: self.view.frame.size.height)
+        _layout.itemSize = CGSize(width: self.view.frame.size.width + 20, height: self.view.frame.size.height);
+        _layout.minimumInteritemSpacing = 0;
+        _layout.minimumLineSpacing = 0;
         self.collectionView.reloadData()
         self.changedCurrentIndex()
         self.bottomToolView.isAbleComplete(self.delegate?.setCompleteState() ?? false)
@@ -222,6 +218,8 @@ extension ZDPhotoPreviewController {
         self.view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[topToolView]", options: [], metrics: nil, views: vd))
         bottomToolView.heightAnchor.constraint(equalToConstant: 48 + UIDevice.APPBOTTOMSAFEHEIGHT).isActive = true
         topToolView.heightAnchor.constraint(equalToConstant: 48 + UIDevice.APPTOPSAFEHEIGHT).isActive = true
+        
+       
     }
     
 }
