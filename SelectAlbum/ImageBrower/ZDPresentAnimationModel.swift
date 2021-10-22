@@ -7,21 +7,6 @@
 
 import Foundation
 
-protocol ZDPresentAnimationProtocol: UIViewController {
-    
-    func getAnimationView() -> UIView?
-    
-    func getAnimationRect() -> CGRect?
-    
-}
-
-extension ZDPresentAnimationProtocol {
-    
-    func getAnimationView() -> UIView? { return nil }
-    
-    func getAnimationRect() -> CGRect? { return nil }
-}
-
 /**
  *  present动画模型
  */
@@ -33,7 +18,7 @@ class ZDPresentAnimationModel: NSObject {
     
     private let swipPresentAnimation = ZDSwipInteractiveAnmationModel()
     
-    func presentController(fromVC: UIViewController , toVC: ZDPresentAnimationProtocol , rect: CGRect? , isAddSwip: Bool = true) {
+    func presentController(fromVC: UIViewController , toVC: ZDDissAnimationProtocol , rect: CGRect? , isAddSwip: Bool = true) {
         dissPresentAnimation.setDelegate(toVC)
         scalePresentAnimation.setStartAnimationRect(rect)
         if isAddSwip {swipPresentAnimation.presentViewController(viewController: toVC)}

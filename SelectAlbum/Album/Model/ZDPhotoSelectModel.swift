@@ -8,18 +8,18 @@
 import Foundation
 import Photos
 
-protocol ZDSelectProtocolDelegate: AnyObject {
+protocol ZDSelectPhotoDelegate: AnyObject {
     
     /// 允许选择的图片
     var selectMaxCount: Int {get}
     
     func selectPHAssetsComplete(assets: [PHAsset])
     
-    func selectPhotosComplete(phtots: [UIImage])
+    func selectPhotosComplete(photos: [UIImage])
     
 }
 
-extension ZDSelectProtocolDelegate {
+extension ZDSelectPhotoDelegate {
     
     func selectPHAssetsComplete(assets: [PHAsset]) {}
 }

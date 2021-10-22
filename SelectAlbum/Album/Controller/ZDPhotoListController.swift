@@ -21,7 +21,7 @@ enum ZDSelectPhotoResult{
  */
 class ZDPhotoListController: UIViewController , PHPhotoLibraryChangeObserver {
     
-    weak var delegate: ZDSelectProtocolDelegate?
+    weak var delegate: ZDSelectPhotoDelegate?
     
     struct ZDAlbumDataModel{
         
@@ -138,8 +138,6 @@ extension ZDPhotoListController {
         }
         self.collectionView.reloadData()
         self.collectionView.performBatchUpdates {
-            
-        } completion: { _ in
             // 判断是否能滚动到底部
             if self.collectionView.contentSize.height > self.collectionView.frame.size.height {
                 let row = (self.currentAblum?.assetArr.count ?? 1) - 1
@@ -147,6 +145,7 @@ extension ZDPhotoListController {
                     self.collectionView.scrollToItem(at: IndexPath(row: row, section: 0), at: .bottom, animated: false)
                 }
             }
+        } completion: { _ in
             if isAnimation{
                 let maxCount = self.currentAblum?.assetArr.count ?? 0
                 self.collectionView.layoutIfNeeded()
@@ -227,7 +226,7 @@ extension ZDPhotoListController {
                 case .success(let image):
                     tempArr[i] = image
                     if tempArr.count == tempArr.compactMap({return $0}).count {
-                        self?.delegate?.selectPhotosComplete(phtots: tempArr.compactMap({return $0}))
+                        self?.delegate?.selectPhotosComplete(photos: tempArr.compactMap({return $0}))
                     }
                 case .failed(let err):
                     err.showToWindow()
@@ -453,7 +452,7 @@ extension ZDPhotoListController {
             return
         }
         
-        ZDPhotoAlbumManager.manager.isUsedCachedFirstAlbum = false
+       // ZDPhotoAlbumManager.manager.isUsedCachedFirstAlbum = false
         ZDPhotoAlbumManager.getFirstCameraAlbum { [weak self] model in
             if let _model = model , self?.currentAblum == nil {
                 self?.currentAblum = _model

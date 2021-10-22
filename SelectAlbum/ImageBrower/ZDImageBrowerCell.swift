@@ -26,9 +26,9 @@ class ZDImageBrowerCell: UICollectionViewCell {
         return image
     }()
     
-    /// 放大缩小
-    private var scrollView: UIScrollView = {
-        let scroll = UIScrollView()
+    ///
+    private var scrollView: ZDBrowerScrollView = {
+        let scroll = ZDBrowerScrollView()
         scroll.isMultipleTouchEnabled = true
         scroll.scrollsToTop = false
         scroll.alwaysBounceVertical = true
@@ -67,6 +67,10 @@ class ZDImageBrowerCell: UICollectionViewCell {
         self.singletapHandler = handler
     }
     
+    func getAnimationView() -> UIView {
+        return self.imageView
+    }
+    
 }
 
 extension ZDImageBrowerCell {
@@ -95,7 +99,7 @@ extension ZDImageBrowerCell {
                 imageContainerView.center.y = self.frame.size.height/2
             }
             // 消除误差
-            if self.imageContainerView.frame.size.height > self.frame.size.height , self.frame.size.height - self.frame.size.height <= 1 {
+            if self.imageContainerView.frame.size.height > self.frame.size.height , self.imageContainerView.frame.size.height - self.frame.size.height <= 1 {
                 self.imageContainerView.frame.size.height = self.frame.size.height
             }
             self.scrollView.contentSize = CGSize(width: self.scrollView.frame.size.width, height: max(self.scrollView.frame.size.height, self.imageContainerView.frame.size.height))
@@ -108,12 +112,30 @@ extension ZDImageBrowerCell {
     
 }
 
+
 extension ZDImageBrowerCell {
     
     private func configMainUI() {
         contentView.addSubview(scrollView)
         scrollView.addSubview(imageContainerView)
         imageContainerView.addSubview(imageView)
+    }
+    
+}
+
+
+private class ZDBrowerScrollView: UIScrollView {
+    
+    // 避免和预览界面下滑动手势冲突
+    override func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        if let pan = gestureRecognizer as? UIPanGestureRecognizer {
+            let translation = pan.translation(in: pan.view)
+            // 顶部向下滑动，禁止响应
+            if self.contentOffset.y == 0 ,  translation.y > 0 {
+                return false
+            }
+        }
+        return true
     }
     
 }

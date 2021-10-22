@@ -10,7 +10,7 @@ import UIKit
 extension UIViewController {
     
     /// 显示相册列表界面
-    func presentPhotoList(_ delegate: ZDSelectProtocolDelegate?) {
+    func presentPhotoList(_ delegate: ZDSelectPhotoDelegate?) {
         guard (self is ZDPhotoListController) == false else { return }
         let photoListVC = ZDPhotoListController()
         photoListVC.delegate = delegate

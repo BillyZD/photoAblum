@@ -38,7 +38,7 @@ class ZDImageBrowerController: UIViewController {
         return collec
     }()
     
-    init(_ imageArr: [UIImage] , startIndex: Int , handler: ((Int) -> CGRect)? ) {
+    init(_ imageArr: [UIImage] , startIndex: Int , handler: ((Int) -> CGRect?)? ) {
         super.init(nibName: nil, bundle: nil)
         self.dissmissRectHandle = handler
         self.imageArr = imageArr
@@ -67,7 +67,6 @@ class ZDImageBrowerController: UIViewController {
         super.viewWillDisappear(animated)
         self.navigationController?.setNavigationBarHidden(false, animated: animated)
     }
-    
     
     deinit {
         ZDLog("deint:ZDImageBrowerController")
@@ -106,7 +105,21 @@ extension ZDImageBrowerController: UICollectionViewDelegate , UICollectionViewDa
     
 }
 
-extension ZDImageBrowerController: ZDPresentAnimationProtocol {
+extension ZDImageBrowerController: ZDDissAnimationProtocol{
+    
+    func getDissAnimationView() -> UIView? {
+        if let cell = collectionView.cellForItem(at: IndexPath(row: currentIndex, section: 0)) as? ZDImageBrowerCell {
+            return cell.getAnimationView()
+        }
+        return nil
+    }
+    
+    func getDissAnimationRect() -> CGRect?{
+        return self.dissmissRectHandle?(currentIndex)
+    }
+}
+
+extension ZDImageBrowerController {
     
     private func configMainUI() {
        

@@ -155,7 +155,7 @@ extension ZDPhotoAssetPreviewCell {
                 imageContainerView.center.y = self.frame.size.height/2
             }
             // 消除误差
-            if self.imageContainerView.frame.size.height > self.frame.size.height , self.frame.size.height - self.frame.size.height <= 1 {
+            if self.imageContainerView.frame.size.height > self.frame.size.height , self.imageContainerView.frame.size.height - self.frame.size.height <= 1 {
                 self.imageContainerView.frame.size.height = self.frame.size.height
             }
             self.scrollView.contentSize = CGSize(width: self.scrollView.frame.size.width, height: max(self.scrollView.frame.size.height, self.imageContainerView.frame.size.height))

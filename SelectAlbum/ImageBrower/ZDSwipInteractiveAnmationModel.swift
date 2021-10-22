@@ -39,6 +39,8 @@ class ZDSwipInteractiveAnmationModel: UIPercentDrivenInteractiveTransition {
             if (translation.x == 0 && translation.y == 0) || (abs(translation.x) > 1) || (translation.y < 0) {
                 self.presrntVC?.view.center = CGPoint.init(x: UIDevice.APPSCREENWIDTH / 2, y: UIDevice.APPSCREENHEIGHT / 2)
                 self.presrntVC?.view.transform = CGAffineTransform.init(scaleX: 1.0, y: 1.0)
+                superView?.backgroundColor = UIColor.black.withAlphaComponent(0)
+                presrntVC?.view.backgroundColor = UIColor.black
                 return
             }
         }

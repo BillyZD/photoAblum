@@ -64,7 +64,7 @@ class ZDPhotoAlbumManager: NSObject {
     /// 是否使用缓存的第一个相册
     var isUsedCachedFirstAlbum: Bool = true
     
-    private var firstAlbumModel: ZDAlbumModel?
+    private var firstAlbumModel: PHAssetCollection? //ZDAlbumModel?
     
     private override init() {}
     
@@ -81,10 +81,14 @@ extension ZDPhotoAlbumManager {
     
     /// 获取第一个需要展示的相册
     static func getFirstCameraAlbum(completeHandle: ((ZDAlbumModel?) -> Void)?) {
-        if let model = self.manager.firstAlbumModel , self.manager.isUsedCachedFirstAlbum {
-            completeHandle?(model)
-        }else {
-            DispatchQueue.global(qos: .background).async {
+        // userInteractive > default > unspecified > userInitiated > utility > background
+        DispatchQueue.global(qos: .userInteractive).async {
+            if let model = self.manager.firstAlbumModel , self.manager.isUsedCachedFirstAlbum {
+                let ablumModel = ZDAlbumModel(collection: model)
+                DispatchQueue.main.async {
+                    completeHandle?(ablumModel)
+                }
+            }else {
                 let smartAlbums = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .albumRegular, options: nil)
                 if smartAlbums.count == 0 {
                     DispatchQueue.main.async {
@@ -94,9 +98,10 @@ extension ZDPhotoAlbumManager {
                     for i in 0 ..< smartAlbums.count {
                         if smartAlbums[i].assetCollectionSubtype == PHAssetCollectionSubtype.smartAlbumUserLibrary {
                             self.manager.isUsedCachedFirstAlbum = true
-                            self.manager.firstAlbumModel = ZDAlbumModel(collection: smartAlbums[i])
+                            self.manager.firstAlbumModel = smartAlbums[i]
+                            let ablumModel = ZDAlbumModel(collection: smartAlbums[i])
                             DispatchQueue.main.async {
-                                completeHandle?(self.manager.firstAlbumModel)
+                                completeHandle?(ablumModel)
                             }
                             return
                         }
@@ -104,11 +109,13 @@ extension ZDPhotoAlbumManager {
                 }
             }
         }
+        
+        
     }
     
     /// 获取所有相册
     static func getAllCamerAlbum(completeHandle: (([ZDAlbumModel]) -> Void)?) {
-        DispatchQueue.global(qos: .background).async {
+        DispatchQueue.global(qos: .default).async {
             let smartAlbums = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .albumRegular, options: nil)
             if smartAlbums.count == 0 {
                 DispatchQueue.main.async {
