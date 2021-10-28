@@ -64,6 +64,8 @@ class ZDPhotoAssetPreviewCell: UICollectionViewCell {
     
     private var singletapHandler: (() -> Void)?
     
+    private var isSendRequestGIF: Bool = false
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         configMainUI()
@@ -103,10 +105,19 @@ extension ZDPhotoAssetPreviewCell {
     
     /// 更新cell
     func updateCell(_ model: ZDPhotoInfoModel) {
+        self.asset = model.asset
+        if model.isGIF() , ZDPhotoImageManager.isAllowGIFPhoto {
+            // 显示GIF
+            self.updateGIFImage(model)
+        }else {
+            self.updatePhotoImage(model)
+        }
+    }
+    
+    private func updatePhotoImage(_ model: ZDPhotoInfoModel) {
         if let _imageRequestID = self.imageRequestID , asset != nil {
             PHImageManager.default().cancelImageRequest(_imageRequestID)
         }
-        self.asset = model.asset
         self.imageRequestID = ZDPhotoImageManager.requestPreviewImage(model.asset) { image, isDegraded, isCloudFailed in
             if image == nil , isCloudFailed {
                 "iCound同步照片失败".showToWindow()
@@ -118,17 +129,59 @@ extension ZDPhotoAssetPreviewCell {
                 self.imageRequestID = nil
             }
         } progressHandler: { progerss, err in
-            if let errText = err?.localizedDescription {
-                errText.showToWindow()
+            if self.asset?.localIdentifier != model.asset.localIdentifier {
                 self.activityIndicator.stopAnimating()
+                return
             }
-            if progerss >= 1 {
-                self.activityIndicator.stopAnimating()
-            }else {
-                self.activityIndicator.startAnimating()
-            }
+            self.handleRequestProgress(progeress: progerss, err: err)
         }
+    }
+    
+    private func updateGIFImage(_ model: ZDPhotoInfoModel) {
+        guard model.isGIF() else  { self.updatePhotoImage(model) ; return}
+        self.isSendRequestGIF = false
+        ZDPhotoImageManager.requestPreviewImage(model.asset, complete: { image, isDegraded, isCloudFailed in
+            if let _image = image {
+                self.imageView.image = _image
+            }
+            self.resizeSubViews()
+            if self.isSendRequestGIF { return }
+            // 显示GIF
+            self.isSendRequestGIF = true
+            ZDPhotoImageManager.getOriginImageData(model.asset) { data, UTI, _, info in
+                ZDLog(UTI ?? "")
+                self.isSendRequestGIF = false
+                if let _data = data {
+                    DispatchQueue.global(qos: .unspecified).async {
+                        let image = UIImage.initGIFImage(gifData: _data)
+                        DispatchQueue.main.async {
+                            self.imageView.image = image
+                        }
+                    }
+                }
+                self.resizeSubViews()
+            } progressHandler: { progeress, err, _, _ in
+                if self.asset?.localIdentifier != model.asset.localIdentifier {
+                    self.activityIndicator.stopAnimating()
+                    return
+                }
+                self.handleRequestProgress(progeress: progeress, err: err)
+            }
 
+        }, progressHandler: nil, networkAccessAllowed: false)
+    }
+    
+    private func handleRequestProgress(progeress: Double , err: Error?) {
+        
+        if let errText = err?.localizedDescription {
+            errText.showToWindow()
+            self.activityIndicator.stopAnimating()
+        }
+        if progeress >= 1 {
+            self.activityIndicator.stopAnimating()
+        }else {
+            self.activityIndicator.startAnimating()
+        }
     }
     
 }

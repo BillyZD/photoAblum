@@ -27,8 +27,8 @@ class ZDImageBrowerCell: UICollectionViewCell {
     }()
     
     ///
-    private var scrollView: ZDBrowerScrollView = {
-        let scroll = ZDBrowerScrollView()
+    private var scrollView: UIScrollView = {
+        let scroll = ZDBrowerScrollView() //ZDBrowerScrollView()
         scroll.isMultipleTouchEnabled = true
         scroll.scrollsToTop = false
         scroll.alwaysBounceVertical = true
@@ -130,12 +130,17 @@ private class ZDBrowerScrollView: UIScrollView {
     override func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         if let pan = gestureRecognizer as? UIPanGestureRecognizer {
             let translation = pan.translation(in: pan.view)
-            // 顶部向下滑动，禁止响应
-            if self.contentOffset.y == 0 ,  translation.y > 0 {
-                return false
+            if self.contentSize.height > self.frame.height {
+                // 顶部向下滑动，禁止响应
+                if self.contentOffset.y == 0 ,  translation.y > 0 {
+                    return false
+                }
             }
         }
-        return true
+        return super.gestureRecognizerShouldBegin(gestureRecognizer)
     }
+
+    
+    
     
 }

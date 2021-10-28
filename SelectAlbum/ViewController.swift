@@ -25,7 +25,7 @@ class ViewController: UIViewController {
         collection.showsVerticalScrollIndicator = false
         layout.minimumLineSpacing = 5
         layout.minimumInteritemSpacing = 5
-        layout.itemSize = CGSize(width: floor((UIDevice.APPSCREENWIDTH - 5 * 3)/4), height: floor((UIDevice.APPSCREENWIDTH - 5 * 3)/4))
+        layout.itemSize = self.getItemSize()
         layout.sectionInset = UIEdgeInsets(top: 2, left: 0, bottom: 2, right: 0)
         return collection
     }()
@@ -50,53 +50,87 @@ class ViewController: UIViewController {
     
     private func deleteSeletPhoto(_ row: Int) {
         self.collectionView.performBatchUpdates {
-            if row < self.selectImageArr.count {
+            if row < self.selectImageArr.count , row >= 0 {
                 self.selectImageArr.remove(at: row)
+            }else {
+                return
             }
             self.collectionView.deleteItems(at: [IndexPath(row: row, section: 0)])
             
         } completion: { _ in
             self.collectionView.reloadData()
         }
-
     }
+    
+    private func getItemSize() -> CGSize {
+        return CGSize(width: floor((UIDevice.APPSCREENWIDTH - 5 * 3)/4), height: floor((UIDevice.APPSCREENWIDTH - 5 * 3)/4))
+    }
+    
 }
 
 extension ViewController: ZDSelectPhotoDelegate {
-    
+
     var selectMaxCount: Int {
         return 9 - self.selectImageArr.count
     }
     
-    func selectPhotosComplete(photos: [UIImage]) {
+    func selectPhotosImageComplete(photos: [UIImage]) {
         self.selectImageArr.append(contentsOf: photos)
         self.collectionView.reloadData()
     }
     
+    
     func selectPHAssetsComplete(assets: [PHAsset]) {
         assets.forEach { asset in
-          //  debugPrint(asset.value(forKey: "filename"))
-            ZDPhotoImageManager.getOriginImageData(asset, resultHandler: { data, _, _, _ in
+            asset.requestContentEditingInput(with: nil) { input, info in
+                if let url = input?.fullSizeImageURL  {
+                    if let image = UIImage.scaleImage(newWidth: 600, url: url) {
+                        ZDLog(image.size)
+                        self.selectImageArr.append(image)
+                        self.collectionView.reloadData()
+                    }
+                }else {
+                    ZDLog("11")
+                }
+            }
+            
+            
+            ZDPhotoImageManager.getOriginImageData(asset, resultHandler: { data, UTI, _, info in
+                ZDLog(UTI ?? "" )
                 if let _data = data {
                     let values = [UInt8](_data)
-                    if values[0] == 0x47 {
-                        // gif
-                        if let image = UIImage.initGIFImage(gifData: _data) {
-                            if let data = image.pngData() {
-                                let values = [UInt8](data)
-                                debugPrint(values[0] , "pngCount:\(data.count)")
-                                
-                            }
-                            if let data = image.jpegData(compressionQuality: 0.9) {
-                                let values = [UInt8](data)
-                                debugPrint(values[0] , data.count)
-                                
-                            }
-                        }
-                    }
-
-
+                    self.selectImageArr.append(UIImage(data: _data)!)
+                    debugPrint(values[0] , "原图大小:\(_data.count)")
+//                    debugPrint(UIImage(data: _data)!.size)
+//                    if values[0] == 0x00 {
+//                        if let ciImage = CIImage(data: _data) {
+//                            let context = CIContext()
+//                            let jpgData = context.jpegRepresentation(of: ciImage, colorSpace: ciImage.colorSpace!, options: [:])
+//                            let jpgValues = [UInt8](jpgData!)
+//                            debugPrint(jpgValues[0] , "jpg:\(jpgData!.count)")
+//                        }
+//                    }
                 }
+
+//                if let _data = data {
+//                    let values = [UInt8](_data)
+//                    ZDLog(values[0])
+//                    if values[0] == 0x47 {
+//                        // gif
+//                        if let image = UIImage.initGIFImage(gifData: _data) {
+//                            if let data = image.pngData() {
+//                                let values = [UInt8](data)
+//                                debugPrint(values[0] , "pngCount:\(data.count)")
+//
+//                            }
+//                            if let data = image.jpegData(compressionQuality: 0.9) {
+//                                let values = [UInt8](data)
+//                                debugPrint(values[0] , data.count)
+//
+//                            }
+//                        }
+//                    }
+//                }
             }, progressHandler: nil)
         }
     }
@@ -123,7 +157,7 @@ extension ViewController:  UICollectionViewDelegate , UICollectionViewDataSource
     
     func  collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ZDSelectImageCell", for: indexPath) as! ZDSelectImageCell
-        cell.imageView.image = selectImageArr[indexPath.row]
+        cell.imageView.setImage(selectImageArr[indexPath.row], size: self.getItemSize(), radius: 8)
         cell.deleteHandler = { [weak self] in
             self?.deleteSeletPhoto(indexPath.row)
         }
@@ -183,10 +217,10 @@ class ZDSelectImageCell: UICollectionViewCell {
         deleteButton.addTarget(self, action: #selector(clickDeleteButtonAction), for: .touchUpInside)
         
         contentView.addSubview(imageView)
-        contentView.addSubview(deleteButton)
+      //  contentView.addSubview(deleteButton)
         let vd: [String: UIView] = ["imageView": imageView , "deleteButton": deleteButton]
-        contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "|[imageView]-(-8)-[deleteButton(16)]|", options: [], metrics: nil, views: vd))
-        contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[deleteButton(16)]-(-8)-[imageView]|", options: [], metrics: nil, views: vd))
+        contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "|[imageView]|", options: [], metrics: nil, views: vd))
+        contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[imageView]|", options: [], metrics: nil, views: vd))
     }
     
     required init?(coder: NSCoder) {

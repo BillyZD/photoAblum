@@ -221,12 +221,12 @@ extension ZDPhotoListController {
         self.operationQueue.maxConcurrentOperationCount = 3
         var tempArr: [UIImage?] = Array(repeating: nil, count: selectPhotoArr.count)
         for i in 0 ..< self.selectPhotoArr.count {
-            let operation = selectPhotoArr[i].requestImageOperation { [weak self] result in
+            let operation = selectPhotoArr[i].requestImageOperation {  result in
                 switch result {
                 case .success(let image):
                     tempArr[i] = image
                     if tempArr.count == tempArr.compactMap({return $0}).count {
-                        self?.delegate?.selectPhotosComplete(photos: tempArr.compactMap({return $0}))
+                        self.delegate?.selectPhotosImageComplete(photos: tempArr.compactMap({return $0}))
                     }
                 case .failed(let err):
                     err.showToWindow()

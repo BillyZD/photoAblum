@@ -48,7 +48,6 @@ class ZDPhotoPreviewController: UIViewController {
     private lazy var collectionView: UICollectionView = {
         _layout.scrollDirection = .horizontal
         let collec = UICollectionView(frame: CGRect.zero, collectionViewLayout: _layout)
-        collec.backgroundColor = UIColor(hexString: "#F9F9F9")
         collec.register(ZDPhotoAssetPreviewCell.classForCoder(), forCellWithReuseIdentifier: "ZDPhotoAssetPreviewCell")
         collec.backgroundColor = UIColor.black
         collec.showsHorizontalScrollIndicator = false
@@ -94,6 +93,10 @@ class ZDPhotoPreviewController: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         self.navigationController?.setNavigationBarHidden(false, animated: animated)
+    }
+    
+    deinit {
+        ZDLog("deinit: ZDPhotoPreviewController")
     }
     
 }
@@ -187,6 +190,15 @@ extension ZDPhotoPreviewController: UICollectionViewDelegate , UICollectionViewD
             self?.handleSingTap()
         }
         return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        (cell as? ZDPhotoAssetPreviewCell)?.recoverSubviews()
+        
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        (cell as? ZDPhotoAssetPreviewCell)?.recoverSubviews()
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {

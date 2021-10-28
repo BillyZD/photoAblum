@@ -13,8 +13,9 @@ import Photos
  */
 struct ZDPhotoInfoModel: Equatable {
     
+    /// 是否为选中状态
     private (set) var isSelectedState: Bool = false
-
+    
     /// 选中的角标,nil,或者小于0未选中
     var selectbadgeValue: Int? = nil {
         didSet{
@@ -35,6 +36,15 @@ struct ZDPhotoInfoModel: Equatable {
     /// 获取原图的大小
     func getOrginImageByte(completeHandler: ((Int64) -> Void)?) {
         ZDPhotoImageManager.getOriginImageByte(self.asset, completeHandler: completeHandler)
+    }
+    
+
+    
+    func isGIF() -> Bool {
+        if let fileName = asset.value(forKey: "filename") as? String {
+            return fileName.hasSuffix("GIF")
+        }
+        return false
     }
     
     func requestImageOperation(complete: ((ZDPhotoOperateionResult) -> Void)?) -> Operation {

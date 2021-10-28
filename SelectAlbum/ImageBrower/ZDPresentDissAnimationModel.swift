@@ -46,7 +46,7 @@ class ZDPresentDissAnimationModel: NSObject , UIViewControllerAnimatedTransition
             var snapshotView: UIView?
             var scaleRatio: CGFloat = 1.0
             if let _animaitonView = self.delegate?.getDissAnimationView() {
-                snapshotView = _animaitonView.snapshotView(afterScreenUpdates: false)
+                snapshotView = _animaitonView //_animaitonView.snapshotView(afterScreenUpdates: false)
                 snapshotView?.layer.zPosition = 30
                 scaleRatio = fromVC.view.frame.size.width/_animaitonView.frame.size.width
             }else {

@@ -27,16 +27,46 @@ extension UIView {
     func drawCirleImage(_ radius: CGFloat) -> UIImage? {
         guard radius > 0 else {  return nil }
         let size = self.bounds.size
-        UIGraphicsBeginImageContextWithOptions(size, false, UIScreen.main.scale)
-        if let context = UIGraphicsGetCurrentContext() {
-            context.addPath(UIBezierPath(roundedRect: self.bounds, cornerRadius: radius).cgPath)
-            context.clip()
-            self.layer.render(in: context)
-            let image = UIGraphicsGetImageFromCurrentImageContext()
-            UIGraphicsEndImageContext()
-            return image
+        let render = UIGraphicsImageRenderer(size: size)
+        let image = render.image { cnx in
+            cnx.cgContext.addPath(UIBezierPath(roundedRect: self.bounds, cornerRadius: radius).cgPath)
+            cnx.cgContext.clip()
+            self.draw(self.bounds)
+            cnx.cgContext.drawPath(using: .fillStroke)
         }
-        return nil
+        return image
+    }
+    
+}
+
+extension UIImageView {
+    
+    func setImage(_ image: UIImage?,size: CGSize , radius: CGFloat) {
+        self.bounds = CGRect(origin: .zero, size: size)
+        self.image = image
+        guard  radius >= 0 else {
+            return
+        }
+//        UIGraphicsBeginImageContextWithOptions(size, false, UIScreen.main.scale)
+//        if let context = UIGraphicsGetCurrentContext() {
+//            context.addPath(UIBezierPath(roundedRect: self.bounds, cornerRadius: radius).cgPath)
+//            context.clip()
+//            self.draw(self.bounds)
+//            context.drawPath(using: .fillStroke)
+//            let image = UIGraphicsGetImageFromCurrentImageContext()
+//            UIGraphicsEndImageContext()
+//            self.image = image
+//        }
+        self.layer.cornerRadius = radius
+        self.layer.masksToBounds = true
+//        let render = UIGraphicsImageRenderer(size: size)
+//        self.image = render.image { cnx in
+//            cnx.cgContext.addPath(UIBezierPath(roundedRect: self.bounds, cornerRadius: radius).cgPath)
+//            cnx.cgContext.clip()
+//            self.draw(self.bounds)
+//            cnx.cgContext.drawPath(using: .fill)
+//        }
+        
     }
     
 }

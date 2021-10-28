@@ -30,8 +30,14 @@ struct ZDPhotoImageManager {
         }
     }
     
-    /// 是否返回原图
-    static var isAllowOriginPhoto: Bool = false
+    /// 缩略图大小
+    static var thumbnailSize: CGSize = CGSize(width: 160, height: 160)
+    
+    /// 是否显示GIF动图
+    static var isAllowGIFPhoto: Bool = true
+    
+    /// 是否返回原图data
+    static var isAllowSelectOrigin: Bool = true
 }
 
 // MARK: - public API
@@ -56,7 +62,8 @@ extension ZDPhotoImageManager {
     @discardableResult
     static func requestPreviewImage(_ asset: PHAsset ,
                                     complete: ((_ image: UIImage? , _ isDegraded: Bool , _ isCloudFailed: Bool) -> Void)?,
-                                    progressHandler:((Double , Error?) -> Void)? = nil) -> PHImageRequestID{
+                                    progressHandler:((Double , Error?) -> Void)? = nil ,
+                                    networkAccessAllowed: Bool = true) -> PHImageRequestID{
         var photoWidth = UIDevice.APPSCREENWIDTH
         if photoWidth > previewMaxWidth {
             photoWidth = previewMaxWidth
@@ -72,7 +79,7 @@ extension ZDPhotoImageManager {
             pixelWidth = pixelWidth * 0.5
         }
         let pixelHeight = pixelWidth/aspectRatio
-        return self.requestPhotoImageWithAsset(asset, CGSize(width: pixelWidth, height: pixelHeight), complete: complete, progressHandler: progressHandler, networkAccessAllowed: true)
+        return self.requestPhotoImageWithAsset(asset, CGSize(width: pixelWidth, height: pixelHeight), complete: complete, progressHandler: progressHandler, networkAccessAllowed: networkAccessAllowed)
         
     }
     
@@ -120,7 +127,7 @@ extension ZDPhotoImageManager {
                     let isCloudFailed = self.isICloudSyncError(info?[PHImageErrorKey]  as? NSError)
                     if let imageData = data {
                         let image = UIImage(data: imageData)
-                        complete?(image?.scaleImage(size: size) , false , isCloudFailed)
+                        complete?(image?.scaleImage(newsize: size) , false , isCloudFailed)
                     }else {
                         complete?(result , false , isCloudFailed)
                     }
@@ -137,7 +144,11 @@ extension ZDPhotoImageManager {
     static func getOriginImageData(_ asset: PHAsset ,resultHandler: @escaping (Data?, String?, CGImagePropertyOrientation, [AnyHashable : Any]?) -> Void , progressHandler: ((Double, Error?, UnsafeMutablePointer<ObjCBool>, [AnyHashable : Any]?) -> Void)?) {
         let downOption = PHImageRequestOptions()
         downOption.resizeMode = .fast
+        downOption.deliveryMode = .fastFormat
         downOption.isNetworkAccessAllowed = true
+        if  let fileName = asset.value(forKey: "filename") as? String , fileName.hasSuffix("GIF"){
+            downOption.version = .original
+        }
         downOption.progressHandler = progressHandler
         if #available(iOS 13, *) {
             PHImageManager.default().requestImageDataAndOrientation(for: asset, options: downOption, resultHandler: resultHandler)
