@@ -18,6 +18,12 @@ class ZDPresentAnimationModel: NSObject {
     
     private let swipPresentAnimation = ZDSwipInteractiveAnmationModel()
     
+    /// 自定义present动画
+    /// - Parameters:
+    ///   - fromVC: fromVC
+    ///   - toVC: 遵行dismiss协议
+    ///   - rect: 初始动画的位置，从fromVC获取
+    ///   - isAddSwip: 是否使用滑动手势动效
     func presentController(fromVC: UIViewController , toVC: ZDDissAnimationProtocol , rect: CGRect? , isAddSwip: Bool = true) {
         dissPresentAnimation.setDelegate(toVC)
         scalePresentAnimation.setStartAnimationRect(rect)

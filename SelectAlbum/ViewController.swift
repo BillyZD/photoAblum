@@ -66,6 +66,10 @@ class ViewController: UIViewController {
         return CGSize(width: floor((UIDevice.APPSCREENWIDTH - 5 * 3)/4), height: floor((UIDevice.APPSCREENWIDTH - 5 * 3)/4))
     }
     
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        self.navigationController?.pushViewController(TestCropController(), animated: true)
+    }
+    
 }
 
 extension ViewController: ZDSelectPhotoDelegate {
@@ -229,6 +233,20 @@ class ZDSelectImageCell: UICollectionViewCell {
     
     @objc private func clickDeleteButtonAction() {
         deleteHandler?()
+    }
+    
+}
+
+
+class TestCropController: UIViewController {
+   
+    
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        self.view.backgroundColor = UIColor.red
+        let cropView = ZDCropImageView(frame: self.view.bounds)
+        self.view.addSubview(cropView)
     }
     
 }

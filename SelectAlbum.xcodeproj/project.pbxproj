@@ -43,6 +43,8 @@
 		F47F10BB27210E7500A0667B /* ZDSwipInteractiveAnmationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F47F10BA27210E7500A0667B /* ZDSwipInteractiveAnmationModel.swift */; };
 		F47F10C127214A7B00A0667B /* ZDImageBrowerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F47F10C027214A7B00A0667B /* ZDImageBrowerController.swift */; };
 		F47F10C32721533E00A0667B /* ZDImageBrowerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F47F10C22721533E00A0667B /* ZDImageBrowerCell.swift */; };
+		F4BDE0E4272BCFC100431357 /* ZDCropImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4BDE0E3272BCFC100431357 /* ZDCropImageView.swift */; };
+		F4BDE0E6272BEC6200431357 /* ZDCropRectModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4BDE0E5272BEC6200431357 /* ZDCropRectModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -87,6 +89,8 @@
 		F47F10BA27210E7500A0667B /* ZDSwipInteractiveAnmationModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZDSwipInteractiveAnmationModel.swift; sourceTree = "<group>"; };
 		F47F10C027214A7B00A0667B /* ZDImageBrowerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZDImageBrowerController.swift; sourceTree = "<group>"; };
 		F47F10C22721533E00A0667B /* ZDImageBrowerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZDImageBrowerCell.swift; sourceTree = "<group>"; };
+		F4BDE0E3272BCFC100431357 /* ZDCropImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZDCropImageView.swift; sourceTree = "<group>"; };
+		F4BDE0E5272BEC6200431357 /* ZDCropRectModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZDCropRectModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -119,6 +123,7 @@
 		F446D8CC2714260700FDC317 /* SelectAlbum */ = {
 			isa = PBXGroup;
 			children = (
+				F4BDE0E2272BCFA000431357 /* CropImage */,
 				F446D8E9271536A300FDC317 /* Album */,
 				F47F10B327202BE300A0667B /* ImageBrower */,
 				F446D8E427152DBB00FDC317 /* Catagory */,
@@ -219,6 +224,15 @@
 			path = ImageBrower;
 			sourceTree = "<group>";
 		};
+		F4BDE0E2272BCFA000431357 /* CropImage */ = {
+			isa = PBXGroup;
+			children = (
+				F4BDE0E3272BCFC100431357 /* ZDCropImageView.swift */,
+				F4BDE0E5272BEC6200431357 /* ZDCropRectModel.swift */,
+			);
+			path = CropImage;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -311,11 +325,13 @@
 				F446D8FE2716C22600FDC317 /* UIColor+Extension.swift in Sources */,
 				F47F109C27183F6900A0667B /* Array+Extension.swift in Sources */,
 				F47F109A2718160400A0667B /* Double+Extension.swift in Sources */,
+				F4BDE0E6272BEC6200431357 /* ZDCropRectModel.swift in Sources */,
 				F446D8EC271536CD00FDC317 /* ZDPhotoListController.swift in Sources */,
 				F47F10A027192DAB00A0667B /* ZDPhotoAlbumAlertView.swift in Sources */,
 				F47F10B527202CFC00A0667B /* ZDPresentScaleAnimationModel.swift in Sources */,
 				F47F10A4271D1D7400A0667B /* ZDPhotoListToolView.swift in Sources */,
 				F446D8F3271556F200FDC317 /* ZDPhotoAlbumManager.swift in Sources */,
+				F4BDE0E4272BCFC100431357 /* ZDCropImageView.swift in Sources */,
 				F47F10AF271EE54A00A0667B /* ZDPhotoRequestOperation.swift in Sources */,
 				F47F10AD271D63DC00A0667B /* YYWeakProxy.m in Sources */,
 				F47F10B72720327A00A0667B /* ZDPresentAnimationModel.swift in Sources */,
@@ -468,7 +484,8 @@
 				DEVELOPMENT_TEAM = AFHDP3W87D;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = SelectAlbum/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "相册";
+				INFOPLIST_KEY_CFBundleDisplayName = SelectAlbum;
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "需要使用相册访问您的图片";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -500,7 +517,8 @@
 				DEVELOPMENT_TEAM = AFHDP3W87D;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = SelectAlbum/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "相册";
+				INFOPLIST_KEY_CFBundleDisplayName = SelectAlbum;
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "需要使用相册访问您的图片";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";

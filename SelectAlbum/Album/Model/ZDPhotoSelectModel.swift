@@ -17,13 +17,11 @@ protocol ZDSelectPhotoDelegate: AnyObject {
     
     func selectPhotosImageComplete(photos: [UIImage])
     
-    func selectPhototsOriginDataComplete(photos: [Data])
 }
 
 extension ZDSelectPhotoDelegate {
     
     func selectPHAssetsComplete(assets: [PHAsset]) {}
-    
-    func selectPhototsOriginDataComplete(photos: [Data]) {}
+
 }
 

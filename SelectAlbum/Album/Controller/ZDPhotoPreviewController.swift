@@ -36,6 +36,8 @@ class ZDPhotoPreviewController: UIViewController {
     
     private var photoModelArr: [ZDPhotoInfoModel] = []
     
+    private let cropView = ZDCropImageView(frame: UIScreen.main.bounds)
+    
     private var currentIndex: Int = 0 {
         didSet{
             if self.currentIndex < 0 { self.currentIndex = 0 ; return}
@@ -231,6 +233,7 @@ extension ZDPhotoPreviewController {
         self.changedCurrentIndex()
         self.bottomToolView.isAbleComplete(self.delegate?.setCompleteState() ?? false)
         self.view.addSubview(bottomToolView)
+        self.view.addSubview(cropView)
         self.view.addSubview(topToolView)
         let vd: [String: UIView] = ["bottomToolView": bottomToolView , "topToolView": topToolView]
         self.view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "|[bottomToolView]|", options: [], metrics: nil, views: vd))

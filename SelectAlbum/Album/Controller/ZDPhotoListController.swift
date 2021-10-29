@@ -174,7 +174,7 @@ extension ZDPhotoListController {
     
     /// 判断权限
     private func judgeAlbumAuth() {
-        switch ZDSystemAuthType.albumAuthType.getAlbumAuthType() {
+        switch ZDSystemAuthType.getAlbumAuthType() {
         case .restricted:
             "没有权限访问相册".showToWindow()
         case .notDetermined:
@@ -188,7 +188,7 @@ extension ZDPhotoListController {
     
     /// 空相册提示
     private func handleEmptyAlbum() {
-        if ZDSystemAuthType.albumAuthType.getAlbumAuthType() == .limited {
+        if ZDSystemAuthType.getAlbumAuthType() == .limited {
             let alert = UIAlertController(title: nil, message: "能访问照片为空，前往设置允许访问更多的照片", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "取消", style: .cancel, handler: nil))
             alert.addAction(UIAlertAction(title: "去设置", style: .default, handler: { _ in

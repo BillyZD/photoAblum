@@ -74,7 +74,7 @@ extension ZDSystemAuthType {
     func isAuthorization() -> Bool {
         switch self {
         case .albumAuthType:
-            let status = self.getAlbumAuthType()
+            let status = ZDSystemAuthType.getAlbumAuthType()
             return status == .authorized || status == .limited
         }
     }
@@ -102,7 +102,7 @@ extension ZDSystemAuthType {
     }
     
     /// 获取访问相册的权限
-    func getAlbumAuthType() -> AuthorizationStatus {
+    static func getAlbumAuthType() -> AuthorizationStatus {
         let albumAuth: PHAuthorizationStatus
         if #available(iOS 14, *) {
             albumAuth = PHPhotoLibrary.authorizationStatus(for: .readWrite)

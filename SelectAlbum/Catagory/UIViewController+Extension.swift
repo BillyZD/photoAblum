@@ -26,6 +26,7 @@ extension UIViewController {
             if let appearance = navController.navigationBar.scrollEdgeAppearance {
                 appearance.backgroundColor = color
                 navController.navigationBar.standardAppearance = appearance
+                navController.navigationBar.scrollEdgeAppearance = appearance
             }else {
                 navController.navigationBar.barTintColor = color
             }
