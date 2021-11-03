@@ -8,7 +8,7 @@
 import UIKit
 
 enum ZDPreviewToolActionType{
-    case back , completed , selected
+    case back , completed , selected, crop , revert
 }
 
 /**
@@ -34,6 +34,21 @@ class ZDPhotoPreviewBottomView: UIView {
         return button
     }()
     
+    private let cropButton: UIButton = {
+        let button = UIButton() ; button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle("裁剪", for: .normal) ; button.setTitleColor(.white, for: .normal)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 14)
+        return button
+    }()
+    
+    private let revertButton: UIButton = {
+        let button = UIButton() ; button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle("还原", for: .normal) ; button.setTitleColor(UIColor(hexString: "#999999"), for: .normal)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 14)
+        button.isUserInteractionEnabled = false
+        return button
+    }()
+    
     private var completeHandler: ((ZDPreviewToolActionType) -> Void)?
     
     override init(frame: CGRect) {
@@ -50,6 +65,13 @@ class ZDPhotoPreviewBottomView: UIView {
         completeHandler?(.completed)
     }
     
+    @objc private func clickCropButton() {
+        completeHandler?(.crop)
+    }
+    
+    @objc private func clickRevertButton() {
+        completeHandler?(.revert)
+    }
 }
 
 // MARK: - public API
@@ -66,6 +88,12 @@ extension ZDPhotoPreviewBottomView {
         self.completeButton.backgroundColor =  isEnabled ? UIColor(hexString: "#FF813B") : UIColor(hexString: "#999999")
     }
     
+    /// 设置是否显示裁剪图
+    func isShowCropImage(_ isShow: Bool) {
+        self.revertButton.isUserInteractionEnabled = isShow
+        self.revertButton.setTitleColor(isShow ? .white : UIColor(hexString: "#999999"), for: .normal)
+    }
+    
     func handleCompleteAction(handler: ((ZDPreviewToolActionType) -> Void)?) {
         self.completeHandler = handler
     }
@@ -75,13 +103,19 @@ extension ZDPhotoPreviewBottomView {
     
     private func configMainUI() {
         self.backgroundColor = UIColor.black.withAlphaComponent(0.7)
+        self.addSubview(cropButton)
         self.addSubview(originByteLabel)
         self.addSubview(completeButton)
-        let vd: [String: UIView] = ["originByteLabel": originByteLabel , "completeButton": completeButton]
-        self.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "|-16-[originByteLabel]-(>=10)-[completeButton(58)]-16-|", options: [.alignAllCenterY], metrics: nil, views: vd))
+        self.addSubview(revertButton)
+        let vd: [String: UIView] = ["originByteLabel": originByteLabel , "cropButton": cropButton , "revertButton": revertButton , "completeButton": completeButton]
+        self.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "|-16-[originByteLabel]-10-[cropButton(40)]-10-[revertButton(40)]-(>=10)-[completeButton(58)]-16-|", options: [.alignAllCenterY], metrics: nil, views: vd))
         completeButton.heightAnchor.constraint(equalToConstant: 28).isActive = true
         originByteLabel.centerYAnchor.constraint(equalTo: self.centerYAnchor, constant: -UIDevice.APPBOTTOMSAFEHEIGHT/2).isActive = true
+        cropButton.heightAnchor.constraint(equalToConstant: 28).isActive = true
+        revertButton.heightAnchor.constraint(equalToConstant: 28).isActive = true
         completeButton.addTarget(self, action: #selector(clickCompleteButton), for: .touchUpInside)
+        cropButton.addTarget(self, action: #selector(clickCropButton), for: .touchUpInside)
+        revertButton.addTarget(self, action: #selector(clickRevertButton), for: .touchUpInside)
     }
 }
 

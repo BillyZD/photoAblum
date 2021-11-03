@@ -26,6 +26,7 @@
 		F446D9002716DA4F00FDC317 /* ZDPhotoAssetMaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F446D8FF2716DA4F00FDC317 /* ZDPhotoAssetMaskView.swift */; };
 		F446D9022716E08400FDC317 /* ZDPhotoPreviewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F446D9012716E08400FDC317 /* ZDPhotoPreviewController.swift */; };
 		F446D9042717C7F300FDC317 /* ZDPhotoAssetPreviewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F446D9032717C7F200FDC317 /* ZDPhotoAssetPreviewCell.swift */; };
+		F4701C6927312B29001EC7A1 /* ZDCropImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4701C6827312B29001EC7A1 /* ZDCropImageView.swift */; };
 		F47F1098271811ED00A0667B /* ZDPhotoPreviewToolView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F47F1097271811ED00A0667B /* ZDPhotoPreviewToolView.swift */; };
 		F47F109A2718160400A0667B /* Double+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = F47F10992718160400A0667B /* Double+Extension.swift */; };
 		F47F109C27183F6900A0667B /* Array+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = F47F109B27183F6900A0667B /* Array+Extension.swift */; };
@@ -43,8 +44,9 @@
 		F47F10BB27210E7500A0667B /* ZDSwipInteractiveAnmationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F47F10BA27210E7500A0667B /* ZDSwipInteractiveAnmationModel.swift */; };
 		F47F10C127214A7B00A0667B /* ZDImageBrowerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F47F10C027214A7B00A0667B /* ZDImageBrowerController.swift */; };
 		F47F10C32721533E00A0667B /* ZDImageBrowerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F47F10C22721533E00A0667B /* ZDImageBrowerCell.swift */; };
-		F4BDE0E4272BCFC100431357 /* ZDCropImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4BDE0E3272BCFC100431357 /* ZDCropImageView.swift */; };
+		F4BDE0E4272BCFC100431357 /* ZDCropRectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4BDE0E3272BCFC100431357 /* ZDCropRectView.swift */; };
 		F4BDE0E6272BEC6200431357 /* ZDCropRectModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4BDE0E5272BEC6200431357 /* ZDCropRectModel.swift */; };
+		F4BDE0E8272FF92100431357 /* ZDCropToolView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4BDE0E7272FF92100431357 /* ZDCropToolView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -69,6 +71,7 @@
 		F446D8FF2716DA4F00FDC317 /* ZDPhotoAssetMaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZDPhotoAssetMaskView.swift; sourceTree = "<group>"; };
 		F446D9012716E08400FDC317 /* ZDPhotoPreviewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZDPhotoPreviewController.swift; sourceTree = "<group>"; };
 		F446D9032717C7F200FDC317 /* ZDPhotoAssetPreviewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZDPhotoAssetPreviewCell.swift; sourceTree = "<group>"; };
+		F4701C6827312B29001EC7A1 /* ZDCropImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZDCropImageView.swift; sourceTree = "<group>"; };
 		F47F1097271811ED00A0667B /* ZDPhotoPreviewToolView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZDPhotoPreviewToolView.swift; sourceTree = "<group>"; };
 		F47F10992718160400A0667B /* Double+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Double+Extension.swift"; sourceTree = "<group>"; };
 		F47F109B27183F6900A0667B /* Array+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Extension.swift"; sourceTree = "<group>"; };
@@ -89,8 +92,9 @@
 		F47F10BA27210E7500A0667B /* ZDSwipInteractiveAnmationModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZDSwipInteractiveAnmationModel.swift; sourceTree = "<group>"; };
 		F47F10C027214A7B00A0667B /* ZDImageBrowerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZDImageBrowerController.swift; sourceTree = "<group>"; };
 		F47F10C22721533E00A0667B /* ZDImageBrowerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZDImageBrowerCell.swift; sourceTree = "<group>"; };
-		F4BDE0E3272BCFC100431357 /* ZDCropImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZDCropImageView.swift; sourceTree = "<group>"; };
+		F4BDE0E3272BCFC100431357 /* ZDCropRectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZDCropRectView.swift; sourceTree = "<group>"; };
 		F4BDE0E5272BEC6200431357 /* ZDCropRectModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZDCropRectModel.swift; sourceTree = "<group>"; };
+		F4BDE0E7272FF92100431357 /* ZDCropToolView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZDCropToolView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -227,8 +231,10 @@
 		F4BDE0E2272BCFA000431357 /* CropImage */ = {
 			isa = PBXGroup;
 			children = (
-				F4BDE0E3272BCFC100431357 /* ZDCropImageView.swift */,
+				F4701C6827312B29001EC7A1 /* ZDCropImageView.swift */,
+				F4BDE0E3272BCFC100431357 /* ZDCropRectView.swift */,
 				F4BDE0E5272BEC6200431357 /* ZDCropRectModel.swift */,
+				F4BDE0E7272FF92100431357 /* ZDCropToolView.swift */,
 			);
 			path = CropImage;
 			sourceTree = "<group>";
@@ -328,11 +334,13 @@
 				F4BDE0E6272BEC6200431357 /* ZDCropRectModel.swift in Sources */,
 				F446D8EC271536CD00FDC317 /* ZDPhotoListController.swift in Sources */,
 				F47F10A027192DAB00A0667B /* ZDPhotoAlbumAlertView.swift in Sources */,
+				F4701C6927312B29001EC7A1 /* ZDCropImageView.swift in Sources */,
 				F47F10B527202CFC00A0667B /* ZDPresentScaleAnimationModel.swift in Sources */,
 				F47F10A4271D1D7400A0667B /* ZDPhotoListToolView.swift in Sources */,
 				F446D8F3271556F200FDC317 /* ZDPhotoAlbumManager.swift in Sources */,
-				F4BDE0E4272BCFC100431357 /* ZDCropImageView.swift in Sources */,
+				F4BDE0E4272BCFC100431357 /* ZDCropRectView.swift in Sources */,
 				F47F10AF271EE54A00A0667B /* ZDPhotoRequestOperation.swift in Sources */,
+				F4BDE0E8272FF92100431357 /* ZDCropToolView.swift in Sources */,
 				F47F10AD271D63DC00A0667B /* YYWeakProxy.m in Sources */,
 				F47F10B72720327A00A0667B /* ZDPresentAnimationModel.swift in Sources */,
 				F446D8E32715234400FDC317 /* SystemAuthTool.swift in Sources */,

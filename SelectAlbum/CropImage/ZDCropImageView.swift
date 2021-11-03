@@ -8,136 +8,274 @@
 import Foundation
 import UIKit
 
+/**
+ *  裁剪View
+ */
 class ZDCropImageView: UIView {
     
-    private let cropModel = ZDCropRectModel()
+    private var cropRectView: ZDCropRectView?
+    
+    private var completeHandler: ((UIImage?) -> Void)?
+    
+    /// 设置图片的父试图View
+    private let imageContainerView: UIView = {
+        let container = UIView()
+        container.clipsToBounds = true
+        container.contentMode = .scaleAspectFill
+        return container
+    }()
+    
+    /// 显示图片
+    private let imageView: UIImageView = {
+        let image = UIImageView()
+        image.clipsToBounds = true
+        image.contentMode = .scaleAspectFill
+        return image
+    }()
+    
+
+    /// 放大缩小
+    private var scrollView: UIScrollView = {
+        let scroll = UIScrollView()
+        scroll.bouncesZoom = true
+        scroll.maximumZoomScale = 2.0
+        scroll.minimumZoomScale = 1.0
+        scroll.isMultipleTouchEnabled = true
+        scroll.scrollsToTop = false
+        scroll.alwaysBounceVertical = true
+        if #available(iOS 11.0, *) {
+            scroll.contentInsetAdjustmentBehavior = .never
+        } else {
+            // Fallback on earlier versions
+        }
+        return scroll
+    }()
+    
+    
+    convenience init(cropImage: UIImage ,cropRect: CGRect? = nil , completeHandler: ((UIImage?) -> Void)?) {
+        self.init()
+        cropRectView = ZDCropRectView(cropRect: cropRect)
+        configMainUI()
+        self.setImage(image: cropImage)
+        self.completeHandler = completeHandler
+        self.setViewBlock()
+    }
+    
+    convenience init(cropRect: CGRect? = nil , completeHandler: ((UIImage?) -> Void)?) {
+        self.init()
+        cropRectView = ZDCropRectView(cropRect: cropRect)
+        configMainUI()
+        self.completeHandler = completeHandler
+        self.setViewBlock()
+    }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        self.backgroundColor = UIColor.clear
-        let width = self.frame.size.width - 20
-        let height = width
-        let cropRect = CGRect(x: 10, y: (self.frame.size.height - height - 100)/2, width: width, height: height)
-        cropModel.setCropRect(cropRect) { [weak self] in
-            self?.setNeedsDisplay()
-        }
+        self.backgroundColor = UIColor.black
         
-        let button1 = UIButton(frame: CGRect(x: 40, y: 50, width: 40, height: 40))
-        button1.setTitle("4:3", for: .normal)
-        button1.setTitleColor(.black, for: .normal)
-        button1.setTitleColor(.white, for: .normal)
-        button1.titleLabel?.font = UIFont.systemFont(ofSize: 14)
-        self.addSubview(button1)
-        button1.addTarget(self, action: #selector(clickFirstButton), for: .touchUpInside)
-        
-        let button2 = UIButton(frame: CGRect(x: 140, y: 50, width: 40, height: 40))
-        button2.setTitle("16:9", for: .normal)
-        button2.setTitleColor(.white, for: .normal)
-        button2.titleLabel?.font = UIFont.systemFont(ofSize: 14)
-        self.addSubview(button2)
-        button2.addTarget(self, action: #selector(clickSecondButton), for: .touchUpInside)
-        
-        let button3 = UIButton(frame: CGRect(x: 240, y: 50, width: 40, height: 40))
-        button3.setTitle("1:1", for: .normal)
-        button3.setTitleColor(.white, for: .normal)
-        button3.titleLabel?.font = UIFont.systemFont(ofSize: 14)
-        self.addSubview(button3)
-        button3.addTarget(self, action: #selector(clickThirdButton), for: .touchUpInside)
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        self.scrollView.frame = self.bounds
+        self.cropRectView?.frame = self.bounds
+        self.resizeSubViews()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        debugPrint("bbb")
+    func setCropImage(cropImage: UIImage) {
+        if cropRectView == nil {
+            cropRectView = ZDCropRectView()
+            self.configMainUI()
+            self.setViewBlock()
+        }
+        self.setImage(image: cropImage)
+       
     }
     
-    // 事件穿透， 只响应button的点击事件
-    override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
-        let superView = super.hitTest(point, with: event)
-        if superView is UIButton {
-            return superView
-        }
-        if superView is ZDCropImageView {
-            // 判断点击的点，是否在边框周围
-            if cropModel.isCropFrame(point) {
-                return superView
+    func cropComplete(completeHandler: ((UIImage?) -> Void)?) {
+        self.completeHandler = completeHandler
+    }
+}
+
+extension ZDCropImageView {
+    
+    private func setViewBlock() {
+        guard  cropRectView != nil else { return }
+        
+        cropRectView?.completeCropHandler = { [weak self] rect in
+            if let _rect = rect {
+                self?.getCropImage(_rect)
+            }else {
+                // 取消
+                self?.completeHandler?(nil)
+                self?.removeFromSuperview()
             }
         }
-        return nil
+        
+        cropRectView?.cropRectChangeHandler = { [weak self] in
+            guard let `self` = self else {return}
+            if self.scrollView.zoomScale == self.scrollView.minimumZoomScale {
+                if self.scrollView.contentOffset == .zero{
+                    self.resizeSubViews()
+                   
+                }else {
+                    UIView.animate(withDuration: 0.25) {
+                        self.resizeSubViews()
+                    }
+                }
+            }else {
+                UIView.animate(withDuration: 0.25) {
+                    self.scrollView.zoomScale = self.scrollView.minimumZoomScale
+                }completion: { _ in
+                    DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.2) {
+                        if self.scrollView.contentOffset == .zero{
+                            self.resizeSubViews()
+                        }else {
+                            UIView.animate(withDuration: 0.5) {
+                                self.resizeSubViews()
+                            }
+                        }
+                    }
+                }
+            }
+            
+        }
+        
     }
     
-    
-    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        debugPrint("aaa")
+    private func setImage(image: UIImage?) {
+        self.imageView.image = image
+        self.resizeSubViews()
     }
     
-    override func draw(_ rect: CGRect) {
-        super.draw(rect)
-        if let context = UIGraphicsGetCurrentContext() {
-            let drawRect = cropModel.getDrawCropRect()
-            UIColor.black.withAlphaComponent(0.5).setFill()
-            let path = UIBezierPath(rect: UIScreen.main.bounds)
-            path.append(UIBezierPath(rect: drawRect))
-            context.addPath(path.cgPath)
-            context.fillPath(using: CoreGraphics.CGPathFillRule.evenOdd)
-            // 添加边框
-            if drawRect.width > 50 , drawRect.height > 50 {
-                context.setLineWidth(3)
-                context.setStrokeColor(UIColor.white.cgColor)
-                context.move(to: CGPoint(x: drawRect.origin.x, y: drawRect.origin.y + 25))
-                context.addLine(to: CGPoint(x: drawRect.origin.x, y:  drawRect.origin.y))
-                context.addLine(to: CGPoint(x: drawRect.origin.x + 25, y: drawRect.origin.y))
-                let rightPoint = CGPoint(x: drawRect.origin.x + drawRect.size.width - 25, y: drawRect.origin.y)
-                context.move(to: rightPoint)
-                context.addLine(to: CGPoint(x: rightPoint.x + 25 , y: rightPoint.y))
-                context.addLine(to: CGPoint(x: rightPoint.x + 25, y: rightPoint.y + 25))
-                let rightDownPoint = CGPoint(x: drawRect.origin.x + drawRect.size.width, y: drawRect.origin.y + drawRect.size.height - 25)
-                context.move(to: rightDownPoint)
-                context.addLine(to: CGPoint(x: rightDownPoint.x, y: rightDownPoint.y + 25))
-                context.addLine(to: CGPoint(x: rightDownPoint.x - 25, y: rightDownPoint.y + 25))
-                let downPoint = CGPoint(x: drawRect.origin.x + 25, y: drawRect.origin.y + drawRect.size.height)
-                context.move(to: downPoint)
-                context.addLine(to: CGPoint(x: downPoint.x - 25, y: downPoint.y))
-                context.addLine(to: CGPoint(x: downPoint.x - 25, y:  downPoint.y - 25))
-                context.strokePath()
+    private func handleImageFullCropRect() {
+        //  判断照片是否能充满裁剪框
+        guard self.cropRectView != nil , self.imageView.frame.height > 0 else { return }
+        let scale = max(self.cropRectView!.cropRect.width/self.imageView.frame.width, self.cropRectView!.cropRect.height/self.imageView.frame.height)
+        if  self.scrollView.minimumZoomScale < scale , scale > 1 {
+            // 将照片充满裁剪框
+            self.scrollView.minimumZoomScale = scale
+            self.scrollView.maximumZoomScale = scale * 2
+            self.scrollView.setZoomScale(scale, animated: true)
+        }
+    }
+    
+    /**
+     *  无论怎么移动，imageView的frame始终是不变的
+     *  imageContainerView的frame是会发生变化 width和height * scrollView.zoomScale
+     */
+    private func getCropImage(_ rect: CGRect) {
+        let scale = self.imageView.image!.size.width/self.imageView.frame.size.width
+        debugPrint(self.imageView.frame, self.imageView.image!.size)
+        let convertRect = self.convert(rect, to: self.scrollView)
+        let newCropRect = self.scrollView.convert(convertRect, to: self.imageContainerView)
+        let cropRect = CGRect(x: newCropRect.origin.x * scale, y: newCropRect.origin.y * scale, width: newCropRect.width * scale, height: newCropRect.height * scale)
+        if let cgImage = self.imageView.image?.cgImage , let cropCgImage = cgImage.cropping(to: cropRect) {
+            completeHandler?(UIImage(cgImage: cropCgImage))
+        }
+
+        self.removeFromSuperview()
+        
+    }
+    
+    /// 设置scroller的contsize和contentInset,用来保证图片的移动在裁剪框内
+    private func refreshScollerContentsize() {
+        if let cropRect = self.cropRectView?.cropRect , self.scrollView.frame.size.width > 0 {
+            // 重新设置contentsize
+            let widthAdd = self.scrollView.frame.size.width - cropRect.maxX
+            let heightAdd = (min(self.imageContainerView.frame.height, self.frame.height) - cropRect.height)/2
+            let newWidth = self.scrollView.contentSize.width + widthAdd
+            let newHight = max(self.scrollView.contentSize.height, self.frame.height) + heightAdd
+            self.scrollView.contentSize = CGSize(width: newWidth, height: newHight)
+            // 新增滑动区域，让照片每一部分都能滑入裁剪框
+            if widthAdd > 0 || heightAdd > 0 {
+//                let cropCenterY = cropRect.origin.y + cropRect.height/2
+                let offsetY: CGFloat = 0 //self.center.y - cropCenterY
                 
+                self.scrollView.contentInset = UIEdgeInsets(top: heightAdd - offsetY , left: cropRect.origin.x, bottom: offsetY, right: 0)
+            }else {
+                self.scrollView.contentInset = UIEdgeInsets.zero
             }
-            context.restoreGState()
+        }
+    }
+}
+
+extension ZDCropImageView: UIScrollViewDelegate {
+    
+    func viewForZooming(in scrollView: UIScrollView) -> UIView? {
+        return imageContainerView
+    }
+    
+    func scrollViewWillBeginZooming(_ scrollView: UIScrollView, with view: UIView?) {
+        scrollView.contentInset = UIEdgeInsets.zero
+    }
+    
+    func scrollViewDidZoom(_ scrollView: UIScrollView) {
+        self.refreshImageContainerViewCenter()
+    }
+    
+    func scrollViewDidEndZooming(_ scrollView: UIScrollView, with view: UIView?, atScale scale: CGFloat) {
+        self.refreshScollerContentsize()
+    }
+}
+
+
+extension ZDCropImageView {
+    
+    private func configMainUI() {
+        guard let rectView = cropRectView else {
+            return
+        }
+        scrollView.delegate = self
+        self.addSubview(scrollView)
+        scrollView.addSubview(imageContainerView)
+        imageContainerView.addSubview(imageView)
+        self.addSubview(rectView)
+    }
+    
+    /// 设置子试图frame
+    private func resizeSubViews() {
+        imageContainerView.frame.origin = CGPoint.zero
+        imageContainerView.frame.size.width = scrollView.frame.width
+        if let image = self.imageView.image , scrollView.frame.height > 0 {
+            if image.size.height / image.size.width > scrollView.frame.size.height / scrollView.frame.size.width {
+                // 超长图
+                imageContainerView.frame.size.height = image.size.height * (scrollView.frame.size.width/image.size.width)
+            }else {
+                var height: CGFloat = 0
+                if image.size.width <= 0 {
+                    height = self.scrollView.frame.width
+                }else {
+                    height = scrollView.frame.size.width * (image.size.height/image.size.width)
+                }
+                imageContainerView.frame.size.height = height
+                imageContainerView.center.y = self.frame.size.height/2
+               
+            }
+            // 消除误差
+            if self.imageContainerView.frame.size.height > self.frame.size.height , self.imageContainerView.frame.size.height - self.frame.size.height <= 1 {
+                self.imageContainerView.frame.size.height = self.frame.size.height
+            }
+            self.scrollView.contentSize = CGSize(width: max(self.scrollView.frame.size.width, self.imageContainerView.frame.size.width), height: max(self.scrollView.frame.size.height, self.imageContainerView.frame.size.height))
+            self.scrollView.scrollRectToVisible(self.bounds, animated: false)
+            self.scrollView.alwaysBounceVertical = imageContainerView.frame.size.height > self.frame.size.height
+            self.imageView.frame = imageContainerView.bounds
+            self.refreshScollerContentsize()
+            self.handleImageFullCropRect()
+           
         }
     }
     
-    deinit {
-        self.cropModel.destoryTimer()
-        ZDLog("deinit: ZDCropImageView")
+    /// 设置中心位置
+    private func refreshImageContainerViewCenter() {
+        let offsetX = (self.scrollView.frame.size.width > self.scrollView.contentSize.width) ? ((self.scrollView.frame.size.width - self.scrollView.contentSize.width ) * 0.5) : 0.0
+        let offsetY = (self.scrollView.frame.size.height > self.scrollView.contentSize.height) ? ((self.scrollView.frame.size.height - self.scrollView.contentSize.height) * 0.5) : 0.0
+        imageContainerView.center = CGPoint(x: scrollView.contentSize.width * 0.5 + offsetX  , y: scrollView.contentSize.height * 0.5 + offsetY)
+   
+        
     }
-    
-    @objc func clickFirstButton() {
-        let width = self.frame.size.width - 20
-        let height = width * 3 / 4
-        let cropRect = CGRect(x: 10, y: (self.frame.size.height - height - 100)/2, width: width, height: height)
-        cropModel.setCropRect(cropRect) { [weak self] in
-            self?.setNeedsDisplay()
-        }
-    }
-    
-    @objc func clickSecondButton() {
-        let width = self.frame.size.width - 100
-        let height = width * 9 / 16
-        let cropRect = CGRect(x: 50, y: (self.frame.size.height - height - 100)/2, width: width, height: height)
-        cropModel.setCropRect(cropRect) { [weak self] in
-            self?.setNeedsDisplay()
-        }
-    }
-    
-    @objc func clickThirdButton() {
-        let width = self.frame.size.width - 20
-        let height = width
-        let cropRect = CGRect(x: 10, y: (self.frame.size.height - height - 100)/2, width: width, height: height)
-        cropModel.setCropRect(cropRect) { [weak self] in
-            self?.setNeedsDisplay()
-        }
-    }
-    
 }

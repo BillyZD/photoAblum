@@ -23,6 +23,8 @@ struct ZDPhotoInfoModel: Equatable {
         }
     }
     
+    var cropImage: UIImage?
+    
     var asset: PHAsset
     
     /// 列表界面展示的下标位置

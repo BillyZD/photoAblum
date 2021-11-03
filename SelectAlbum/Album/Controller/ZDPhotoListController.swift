@@ -132,6 +132,7 @@ extension ZDPhotoListController {
             self.selectPhotoArr.forEach { model in
                 if let index = self.currentAblum?.assetArr.firstIndex(of: model) {
                     self.currentAblum?.assetArr[index].selectbadgeValue = model.selectbadgeValue
+                    self.currentAblum?.assetArr[index].cropImage = model.cropImage
                 }
             }
             self.setSelectedFullState()
@@ -221,21 +222,31 @@ extension ZDPhotoListController {
         self.operationQueue.maxConcurrentOperationCount = 3
         var tempArr: [UIImage?] = Array(repeating: nil, count: selectPhotoArr.count)
         for i in 0 ..< self.selectPhotoArr.count {
-            let operation = selectPhotoArr[i].requestImageOperation {  result in
-                switch result {
-                case .success(let image):
-                    tempArr[i] = image
+            if let cropImage = self.selectPhotoArr[i].cropImage {
+                tempArr[i] = cropImage
+                if i == self.selectPhotoArr.count - 1 {
                     if tempArr.count == tempArr.compactMap({return $0}).count {
                         self.delegate?.selectPhotosImageComplete(photos: tempArr.compactMap({return $0}))
                     }
-                case .failed(let err):
-                    err.showToWindow()
-                    tempArr.remove(at: i)
-                case .preogress(let progress):
-                    ZDLog(progress)
                 }
+            }else {
+                let operation = selectPhotoArr[i].requestImageOperation {  result in
+                    switch result {
+                    case .success(let image):
+                        tempArr[i] = image
+                        if tempArr.count == tempArr.compactMap({return $0}).count {
+                            self.delegate?.selectPhotosImageComplete(photos: tempArr.compactMap({return $0}))
+                        }
+                    case .failed(let err):
+                        err.showToWindow()
+                        tempArr.remove(at: i)
+                    case .preogress(let progress):
+                        ZDLog(progress)
+                    }
+                }
+                self.operationQueue.addOperation(operation)
             }
-            self.operationQueue.addOperation(operation)
+            
         }
     }
     
@@ -373,6 +384,17 @@ extension ZDPhotoListController {
 
 //MARK: - 预览界面代理事件回调
 extension ZDPhotoListController: SHPhotoPreviewDelegate {
+    
+    func cropImageComplete(_ row: Int, cropImage: UIImage?) {
+        guard row >= 0 , row < self.currentAblum?.assetArr.count ?? 0 else {
+            return
+        }
+        self.currentAblum?.assetArr[row].cropImage = cropImage
+        if let index = self.selectPhotoArr.firstIndex(where: {$0.row == row}) {
+            self.selectPhotoArr[index].cropImage = cropImage
+        }
+    }
+    
     
     func startsSelectPhoto(_ row: Int) -> ZDSelectPhotoResult {
         let res = self.handleSelectedPhoto(row)

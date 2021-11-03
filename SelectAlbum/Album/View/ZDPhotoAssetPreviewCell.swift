@@ -103,9 +103,22 @@ extension ZDPhotoAssetPreviewCell {
         self.singletapHandler = handler
     }
     
+    func getShowImage() -> UIImage? {
+        return self.imageView.image
+    }
+    
+    func updateCell(image: UIImage) {
+        self.imageView.image = image
+        self.resizeSubViews()
+    }
+    
     /// 更新cell
     func updateCell(_ model: ZDPhotoInfoModel) {
         self.asset = model.asset
+        guard model.cropImage == nil else {
+            self.updateCell(image: model.cropImage!)
+            return
+        }
         if model.isGIF() , ZDPhotoImageManager.isAllowGIFPhoto {
             // 显示GIF
             self.updateGIFImage(model)

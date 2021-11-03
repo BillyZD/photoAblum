@@ -66,10 +66,6 @@ class ViewController: UIViewController {
         return CGSize(width: floor((UIDevice.APPSCREENWIDTH - 5 * 3)/4), height: floor((UIDevice.APPSCREENWIDTH - 5 * 3)/4))
     }
     
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        self.navigationController?.pushViewController(TestCropController(), animated: true)
-    }
-    
 }
 
 extension ViewController: ZDSelectPhotoDelegate {
@@ -81,29 +77,30 @@ extension ViewController: ZDSelectPhotoDelegate {
     func selectPhotosImageComplete(photos: [UIImage]) {
         self.selectImageArr.append(contentsOf: photos)
         self.collectionView.reloadData()
+
     }
     
     
     func selectPHAssetsComplete(assets: [PHAsset]) {
         assets.forEach { asset in
-            asset.requestContentEditingInput(with: nil) { input, info in
-                if let url = input?.fullSizeImageURL  {
-                    if let image = UIImage.scaleImage(newWidth: 600, url: url) {
-                        ZDLog(image.size)
-                        self.selectImageArr.append(image)
-                        self.collectionView.reloadData()
-                    }
-                }else {
-                    ZDLog("11")
-                }
-            }
+//            asset.requestContentEditingInput(with: nil) { input, info in
+//                if let url = input?.fullSizeImageURL  {
+//                    if let image = UIImage.scaleImage(newWidth: 600, url: url) {
+//                        ZDLog(image.size)
+//                        self.selectImageArr.append(image)
+//                        self.collectionView.reloadData()
+//                    }
+//                }else {
+//                    ZDLog("11")
+//                }
+//            }
             
             
             ZDPhotoImageManager.getOriginImageData(asset, resultHandler: { data, UTI, _, info in
                 ZDLog(UTI ?? "" )
                 if let _data = data {
                     let values = [UInt8](_data)
-                    self.selectImageArr.append(UIImage(data: _data)!)
+                   // self.selectImageArr.append(UIImage(data: _data)!)
                     debugPrint(values[0] , "原图大小:\(_data.count)")
 //                    debugPrint(UIImage(data: _data)!.size)
 //                    if values[0] == 0x00 {
@@ -240,13 +237,48 @@ class ZDSelectImageCell: UICollectionViewCell {
 
 class TestCropController: UIViewController {
    
+    var image: UIImage?
     
+    private var cropView: ZDCropRectView = ZDCropRectView()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.backgroundColor = UIColor.red
-        let cropView = ZDCropImageView(frame: self.view.bounds)
+        self.view.backgroundColor = UIColor.black
+        cropView.translatesAutoresizingMaskIntoConstraints = false
         self.view.addSubview(cropView)
+        let vd: [String: UIView] = ["cropView": cropView]
+        self.view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "|[cropView]|", options: [], metrics: nil, views: vd))
+        self.view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[cropView]|", options: [], metrics: nil, views: vd))
+        debugPrint(self.view.frame , cropView.frame , "viewDidLoad")
+        
+        guard let cropImage = image else {
+            return
+        }
+        
+        let imageView = UIImageView(image: cropImage)
+        imageView.contentMode = .scaleAspectFit
+        imageView.clipsToBounds = true
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        self.view.addSubview(imageView)
+        self.view.sendSubviewToBack(imageView)
+        let _vd: [String: UIView] = ["imageView": imageView]
+        self.view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "|[imageView]|", options: [], metrics: nil, views: _vd))
+        self.view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[imageView]|", options: [], metrics: nil, views: _vd))
     }
     
+    @available(iOS 11.0, *)
+    override func viewSafeAreaInsetsDidChange() {
+        super.viewSafeAreaInsetsDidChange()
+        debugPrint(self.view.frame , "viewSafeAreaInsetsDidChange")
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        debugPrint(self.view.frame , "viewDidLayoutSubviews")
+    }
+    
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        debugPrint(self.view.frame , "viewWillLayoutSubviews")
+    }
 }

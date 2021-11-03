@@ -16,6 +16,7 @@ protocol SHPhotoPreviewDelegate: AnyObject {
     /// - Returns: 返回选择照片结果
     func startsSelectPhoto(_ row: Int) -> ZDSelectPhotoResult
     
+    func cropImageComplete(_ row: Int , cropImage: UIImage?)
     
     /// 设置完成按钮的状态
     func setCompleteState() -> Bool
@@ -35,9 +36,7 @@ class ZDPhotoPreviewController: UIViewController {
     override var prefersStatusBarHidden: Bool { return true }
     
     private var photoModelArr: [ZDPhotoInfoModel] = []
-    
-    private let cropView = ZDCropImageView(frame: UIScreen.main.bounds)
-    
+
     private var currentIndex: Int = 0 {
         didSet{
             if self.currentIndex < 0 { self.currentIndex = 0 ; return}
@@ -128,6 +127,7 @@ extension ZDPhotoPreviewController {
         photoModelArr[currentIndex].getOrginImageByte { [weak self] byteCount in
             self?.bottomToolView.setOriginByte(byteCount)
         }
+        self.bottomToolView.isShowCropImage(photoModelArr[currentIndex].cropImage != nil)
         // 设置角标
         self.topToolView.setRightBadgValue(photoModelArr[currentIndex].selectbadgeValue)
     }
@@ -141,6 +141,10 @@ extension ZDPhotoPreviewController {
             self.delegate?.completeSelectPhoto()
         case .selected:
             self.handleSelectPhotoAction()
+        case .crop:
+            self.startCropImageAction()
+        case .revert:
+            self.cropComplete(cropImage: nil)
         }
     }
     
@@ -174,6 +178,38 @@ extension ZDPhotoPreviewController {
             }
         }
         self.bottomToolView.isAbleComplete(self.delegate?.setCompleteState() ?? false)
+    }
+    
+    private func startCropImageAction() {
+        if let cell = collectionView.cellForItem(at: IndexPath(row: currentIndex, section: 0)) as? ZDPhotoAssetPreviewCell , let originImage = cell.getShowImage(){
+            let cropPhotoView = ZDCropImageView(cropImage: originImage, cropRect: nil) { [weak self] image in
+                self?.cropComplete(cropImage: image)
+            }
+            cropPhotoView.frame = self.view.bounds
+            self.view.addSubview(cropPhotoView)
+            self.view.bringSubviewToFront(cropPhotoView)
+        
+        }
+    }
+    
+    private func cropComplete(cropImage: UIImage?) {
+        guard  currentIndex >= 0 , currentIndex < self.photoModelArr.count else {
+            return
+        }
+        if let cell = collectionView.cellForItem(at: IndexPath(row: currentIndex, section: 0)) as? ZDPhotoAssetPreviewCell {
+            self.delegate?.cropImageComplete(self.photoModelArr[currentIndex].row, cropImage: cropImage)
+            if let image = cropImage {
+                cell.updateCell(image: image)
+                photoModelArr[currentIndex].cropImage = image
+            }else {
+                if photoModelArr[currentIndex].cropImage != nil {
+                    photoModelArr[currentIndex].cropImage = nil
+                    cell.updateCell(photoModelArr[currentIndex])
+                }
+            }
+           
+            self.bottomToolView.isShowCropImage(cropImage != nil)
+        }
     }
     
 }
@@ -233,7 +269,6 @@ extension ZDPhotoPreviewController {
         self.changedCurrentIndex()
         self.bottomToolView.isAbleComplete(self.delegate?.setCompleteState() ?? false)
         self.view.addSubview(bottomToolView)
-        self.view.addSubview(cropView)
         self.view.addSubview(topToolView)
         let vd: [String: UIView] = ["bottomToolView": bottomToolView , "topToolView": topToolView]
         self.view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "|[bottomToolView]|", options: [], metrics: nil, views: vd))

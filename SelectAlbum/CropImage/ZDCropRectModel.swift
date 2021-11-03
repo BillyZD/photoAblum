@@ -6,7 +6,13 @@
 //
 
 import Foundation
+import UIKit
 
+enum ZDTouchPosition{
+    
+    case leftUp, rightUp, rightDown , leftDown
+    
+}
 
 class ZDCropRectModel: NSObject {
     
@@ -33,6 +39,16 @@ class ZDCropRectModel: NSObject {
     private var disLink: CADisplayLink!
     
     private var drawHandler: (() -> Void)?
+    
+    private var touchBeganPoint: CGPoint?
+    
+    private var touchMovePoint: CGPoint?
+    
+    /// 手势缩小裁剪框时的最小大小
+    private let rectMineSize: CGSize = CGSize(width: 100, height: 100)
+    
+    /// 距离边距
+    private let edgeInset = UIEdgeInsets(top: 50 + UIDevice.APPTOPSAFEHEIGHT, left: 20, bottom: 70 + UIDevice.APPBOTTOMSAFEHEIGHT, right: 20)
     
     override init() {
         super.init()
@@ -64,9 +80,18 @@ extension ZDCropRectModel {
         }
     }
     
-    /// 获取当前绘制的裁剪区域
+    /// 获取当前需要绘制的裁剪区域
     func getDrawCropRect() -> CGRect {
         return self.cropRect
+    }
+    
+    /// 获取最终需要裁剪的区域
+    func getCropRect() -> CGRect {
+        return self.newCropRect
+    }
+    
+    func getCropEdgeInset() -> UIEdgeInsets {
+        return self.edgeInset
     }
     
     /// 销毁控制器
@@ -77,15 +102,83 @@ extension ZDCropRectModel {
     
     /// 判断点击的点是否在所画区域的边框上
     func isCropFrame(_ point: CGPoint) -> Bool {
-//        // 左上角
-//        if point.x <= cropRect.origin.x + 20, point.y <= cropRect.origin.y + 20 , point.x >= cropRect.origin.x - 5  {
-//            return true
-//        }
-//        // 右上角
-//        if point.x <= cropRect.origin.x + cropRect.size.width , {
-//            return true
-//        }
-        return true
+        return self.getTouchPointPosition(point: point) != nil
+    }
+    
+    func setTouchBeganPoint(_ point: CGPoint?) {
+        self.touchBeganPoint = point
+    }
+    
+    func setTouchMovePoint(_ point: CGPoint?) {
+        self.touchMovePoint = point
+        if let beganPoint = self.touchBeganPoint , let currentPoints = self.touchMovePoint , let position = self.getTouchPointPosition(point: beganPoint) {
+            // 手指水平滑动的距离,向右>0
+            let touchMoveX = currentPoints.x - beganPoint.x
+            // 手指垂直滑动的距离,向下>0
+            let touchMoveY = currentPoints.y - beganPoint.y
+            switch position {
+            case .leftUp , .leftDown:
+                // 计算当前的X坐标
+                var newX = (self.oldCropRect.origin.x + touchMoveX)
+                // 限制左边界
+                newX = newX <= edgeInset.left ? edgeInset.left : newX
+                // 计算当前宽度
+                var newWidth = self.oldCropRect.width - (newX - self.oldCropRect.origin.x)
+                // 限制最小宽度
+                if newWidth <= rectMineSize.width {
+                    newWidth = rectMineSize.width
+                    newX = self.cropRect.origin.x
+                }
+                // 计算当前Y的坐标
+                var newY = (self.oldCropRect.origin.y + touchMoveY)
+                // 限制上边界
+                newY = newY <= edgeInset.top ? edgeInset.top : newY
+                // 计算当前高度
+                var newHeight = self.oldCropRect.height - (newY - self.oldCropRect.origin.y)
+                if position == .leftDown {
+                    newY = self.cropRect.origin.y
+                    newHeight = self.oldCropRect.height + touchMoveY
+                    newHeight = newHeight <= rectMineSize.height ? rectMineSize.height : newHeight
+                    if newHeight + newY >= UIDevice.APPSCREENHEIGHT - edgeInset.bottom {
+                        newHeight = UIDevice.APPSCREENHEIGHT - edgeInset.bottom - newY
+                    }
+                }
+                if newHeight < rectMineSize.height {
+                    newHeight = rectMineSize.height
+                    newY = self.cropRect.origin.y
+                }
+                self.cropRect = CGRect(x: newX, y: newY, width: newWidth, height: newHeight)
+            case .rightUp , .rightDown:
+                let newX = self.cropRect.origin.x
+                var newWidth = self.oldCropRect.width + touchMoveX
+                newWidth = newWidth < rectMineSize.width ? rectMineSize.width : newWidth
+                // 限制右边距
+                if newX + newWidth > UIDevice.APPSCREENWIDTH - edgeInset.right {
+                    newWidth = UIDevice.APPSCREENWIDTH - edgeInset.right - newX
+                }
+                var newY = (self.oldCropRect.origin.y + touchMoveY)
+                newY = newY <= edgeInset.top ? edgeInset.top : newY
+                // 计算当前高度
+                var newHeight = self.oldCropRect.height - (newY - self.oldCropRect.origin.y)
+                if position == .rightDown {
+                    newY = self.cropRect.origin.y
+                    newHeight = self.oldCropRect.height + touchMoveY
+                    newHeight = newHeight <= rectMineSize.height ? rectMineSize.height : newHeight
+                    if newHeight + newY >= UIDevice.APPSCREENHEIGHT - edgeInset.bottom {
+                        newHeight = UIDevice.APPSCREENHEIGHT - edgeInset.bottom - newY
+                    }
+                }
+                if newHeight < rectMineSize.height {
+                    newHeight = rectMineSize.height
+                    newY = self.cropRect.origin.y
+                }
+                self.cropRect = CGRect(x: newX, y: newY, width: newWidth, height: newHeight)
+            }
+            
+        }else {
+            self.oldCropRect = self.cropRect
+            self.newCropRect = self.cropRect
+        }
     }
 }
 
@@ -121,7 +214,26 @@ extension ZDCropRectModel {
         let marginH = self.newCropRect.size.height - self.oldCropRect.size.height
         let newH = (self.oldCropRect.size.height + marginH * progress)
         self.cropRect = CGRect(x: newX, y: newY, width: newW, height: newH)
-        debugPrint(self.cropRect)
     }
     
+    private func getTouchPointPosition(point: CGPoint) -> ZDTouchPosition? {
+        let leftUpPath = UIBezierPath(arcCenter: self.oldCropRect.origin, radius: 20, startAngle: 0, endAngle: .pi * 2, clockwise: false)
+        if leftUpPath.contains(point) {
+            return .leftUp
+        }
+        let rightUpPath = UIBezierPath(arcCenter: CGPoint(x: self.oldCropRect.origin.x + self.oldCropRect.width, y: self.oldCropRect.origin.y), radius: 20, startAngle: 0, endAngle: .pi * 2, clockwise: false)
+        if rightUpPath.contains(point) {
+            return .rightUp
+        }
+        let rightDownPath = UIBezierPath(arcCenter: CGPoint(x: self.oldCropRect.origin.x + self.oldCropRect.width, y: self.oldCropRect.origin.y + self.oldCropRect.height), radius: 20, startAngle: 0, endAngle: .pi * 2, clockwise: false)
+        if rightDownPath.contains(point) {
+    
+            return .rightDown
+        }
+        let leftDownPath = UIBezierPath(arcCenter: CGPoint(x: self.oldCropRect.origin.x, y: self.oldCropRect.origin.y + self.oldCropRect.height), radius: 20, startAngle: 0, endAngle: .pi * 2, clockwise: false)
+        if leftDownPath.contains(point) {
+            return .leftDown
+        }
+        return nil
+    }
 }
