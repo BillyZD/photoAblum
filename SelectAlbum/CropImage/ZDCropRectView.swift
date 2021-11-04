@@ -23,28 +23,16 @@ class ZDCropRectView: UIView {
     /// 裁剪框发生变化的回调
     var cropRectChangeHandler: (() -> Void)?
     
-    /// 默认裁剪框
-    private var defaultCropRect: CGRect = CGRect(x: 20, y: (UIDevice.APPSCREENHEIGHT - (UIDevice.APPSCREENWIDTH - 40))/2, width: UIDevice.APPSCREENWIDTH - 40, height: UIDevice.APPSCREENWIDTH - 40)
-    
     private let cropModel = ZDCropRectModel()
     
     private let bottomTool = ZDCropToolView()
     
-    convenience init(cropRect: CGRect?) {
-        self.init(frame: UIScreen.main.bounds)
-        if let _crop = cropRect , self.isAllowSetCropRect(_crop) , self.defaultCropRect != _crop {
-            self.defaultCropRect = _crop
-            cropModel.setCropRect(defaultCropRect,isAnimation: false) { [weak self] in
-                self?.setNeedsDisplay()
-            }
-        }
-    }
-    
+   
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.backgroundColor = UIColor.clear
         // 设置初始裁剪框
-        cropModel.setCropRect(defaultCropRect , isAnimation: true) { [weak self] in
+        cropModel.setCropRect(ZDCropImageManager.manager.defauleCropRect , isAnimation: true) { [weak self] in
             self?.setNeedsDisplay()
         }
         self.addSubview(bottomTool)
@@ -72,7 +60,7 @@ class ZDCropRectView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // 事件穿透， 只响应button的点击事件
+    // 事件穿透， 只响应button和裁剪框边角的点击事件
     override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
         let superView = super.hitTest(point, with: event)
         if superView is UIButton {
@@ -88,19 +76,29 @@ class ZDCropRectView: UIView {
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        self.cropModel.setTouchBeganPoint(touches.first?.location(in: self))
+        if ZDCropImageManager.manager.cropStyle == .dragScale {
+            self.cropModel.setTouchBeganPoint(touches.first?.location(in: self))
+        }
+        
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        self.cropModel.setTouchMovePoint(touches.first?.location(in: self))
+        if ZDCropImageManager.manager.cropStyle == .dragScale {
+            self.cropModel.setTouchMovePoint(touches.first?.location(in: self))
+        }
     }
     
     override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
-        self.cropModel.setTouchMovePoint(nil)
+        if ZDCropImageManager.manager.cropStyle == .dragScale {
+            self.cropModel.setTouchMovePoint(nil)
+        }
+       
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        self.cropModel.setTouchMovePoint(nil)
+        if ZDCropImageManager.manager.cropStyle == .dragScale {
+            self.cropModel.setTouchMovePoint(nil)
+        }
     }
     
     override func draw(_ rect: CGRect) {
@@ -149,8 +147,8 @@ class ZDCropRectView: UIView {
     
     /// 设置默认1:1的裁剪框
     private func setScale1CropRect() {
-        if self.cropRect == defaultCropRect {return}
-        cropModel.setCropRect(defaultCropRect) { [weak self] in
+        if self.cropRect == ZDCropImageManager.manager.defauleCropRect {return}
+        cropModel.setCropRect(ZDCropImageManager.manager.defauleCropRect) { [weak self] in
             self?.setNeedsDisplay()
         }
         cropRectChangeHandler?()
@@ -158,9 +156,9 @@ class ZDCropRectView: UIView {
     
     /// 设置默认16:9的裁剪框
     private func setScale16CropRect() {
-        let height = self.defaultCropRect.width * 9.0 / 16.0
+        let height = ZDCropImageManager.manager.defauleCropRect.width * 9.0 / 16.0
         let y = (UIDevice.APPSCREENHEIGHT - height)/2
-        let newCropRect = CGRect(origin: CGPoint(x: defaultCropRect.origin.x, y: y), size: CGSize(width: defaultCropRect.width, height: height))
+        let newCropRect = CGRect(origin: CGPoint(x: ZDCropImageManager.manager.defauleCropRect.origin.x, y: y), size: CGSize(width: ZDCropImageManager.manager.defauleCropRect.width, height: height))
         if self.cropRect == newCropRect {return}
         cropModel.setCropRect(newCropRect) { [weak self] in
             self?.setNeedsDisplay()
@@ -170,9 +168,9 @@ class ZDCropRectView: UIView {
     
     /// 设置默认4:3的裁剪框
     private func setScale4CropRect() {
-        let height = self.defaultCropRect.width * 3.0 / 4.0
+        let height = ZDCropImageManager.manager.defauleCropRect.width * 3.0 / 4.0
         let y = (UIDevice.APPSCREENHEIGHT - height)/2
-        let newCropRect = CGRect(origin: CGPoint(x:  defaultCropRect.origin.x, y: y), size: CGSize(width: defaultCropRect.width, height: height))
+        let newCropRect = CGRect(origin: CGPoint(x:  ZDCropImageManager.manager.defauleCropRect.origin.x, y: y), size: CGSize(width: ZDCropImageManager.manager.defauleCropRect.width, height: height))
         if self.cropRect == newCropRect {return}
         cropModel.setCropRect(newCropRect) {
             [weak self] in
@@ -181,16 +179,5 @@ class ZDCropRectView: UIView {
         cropRectChangeHandler?()
     }
     
-    private func isAllowSetCropRect(_ cropRect: CGRect) -> Bool {
-        if cropRect.origin.x < 0 ||  cropRect.origin.y < 0 {
-            return false
-        }
-        let edgeinset = self.cropModel.getCropEdgeInset()
-        if cropRect.origin.x + cropRect.size.width > UIDevice.APPSCREENWIDTH - edgeinset.left - edgeinset.right || cropRect.origin.y + cropRect.size.height > UIDevice.APPSCREENHEIGHT - edgeinset.top - edgeinset.bottom {
-            return false
-        }
-        return true
-        
-    }
     
 }

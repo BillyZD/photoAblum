@@ -27,6 +27,7 @@
 		F446D9022716E08400FDC317 /* ZDPhotoPreviewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F446D9012716E08400FDC317 /* ZDPhotoPreviewController.swift */; };
 		F446D9042717C7F300FDC317 /* ZDPhotoAssetPreviewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F446D9032717C7F200FDC317 /* ZDPhotoAssetPreviewCell.swift */; };
 		F4701C6927312B29001EC7A1 /* ZDCropImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4701C6827312B29001EC7A1 /* ZDCropImageView.swift */; };
+		F4701C6B27338202001EC7A1 /* ZDCropImageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4701C6A27338202001EC7A1 /* ZDCropImageManager.swift */; };
 		F47F1098271811ED00A0667B /* ZDPhotoPreviewToolView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F47F1097271811ED00A0667B /* ZDPhotoPreviewToolView.swift */; };
 		F47F109A2718160400A0667B /* Double+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = F47F10992718160400A0667B /* Double+Extension.swift */; };
 		F47F109C27183F6900A0667B /* Array+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = F47F109B27183F6900A0667B /* Array+Extension.swift */; };
@@ -72,6 +73,7 @@
 		F446D9012716E08400FDC317 /* ZDPhotoPreviewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZDPhotoPreviewController.swift; sourceTree = "<group>"; };
 		F446D9032717C7F200FDC317 /* ZDPhotoAssetPreviewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZDPhotoAssetPreviewCell.swift; sourceTree = "<group>"; };
 		F4701C6827312B29001EC7A1 /* ZDCropImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZDCropImageView.swift; sourceTree = "<group>"; };
+		F4701C6A27338202001EC7A1 /* ZDCropImageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZDCropImageManager.swift; sourceTree = "<group>"; };
 		F47F1097271811ED00A0667B /* ZDPhotoPreviewToolView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZDPhotoPreviewToolView.swift; sourceTree = "<group>"; };
 		F47F10992718160400A0667B /* Double+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Double+Extension.swift"; sourceTree = "<group>"; };
 		F47F109B27183F6900A0667B /* Array+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Extension.swift"; sourceTree = "<group>"; };
@@ -231,6 +233,7 @@
 		F4BDE0E2272BCFA000431357 /* CropImage */ = {
 			isa = PBXGroup;
 			children = (
+				F4701C6A27338202001EC7A1 /* ZDCropImageManager.swift */,
 				F4701C6827312B29001EC7A1 /* ZDCropImageView.swift */,
 				F4BDE0E3272BCFC100431357 /* ZDCropRectView.swift */,
 				F4BDE0E5272BEC6200431357 /* ZDCropRectModel.swift */,
@@ -312,6 +315,7 @@
 			files = (
 				F446D8F02715389B00FDC317 /* UIViewController+Extension.swift in Sources */,
 				F446D8D22714260700FDC317 /* ViewController.swift in Sources */,
+				F4701C6B27338202001EC7A1 /* ZDCropImageManager.swift in Sources */,
 				F47F109E2719266100A0667B /* ZDPhotoNavigaTitleView.swift in Sources */,
 				F446D8EE2715372E00FDC317 /* ZDNavigationController.swift in Sources */,
 				F47F10C32721533E00A0667B /* ZDImageBrowerCell.swift in Sources */,

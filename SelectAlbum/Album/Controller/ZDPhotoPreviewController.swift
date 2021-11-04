@@ -16,6 +16,12 @@ protocol SHPhotoPreviewDelegate: AnyObject {
     /// - Returns: 返回选择照片结果
     func startsSelectPhoto(_ row: Int) -> ZDSelectPhotoResult
     
+    
+    /**
+     *  裁剪/还原完成的回调
+     *  裁剪成功，返回裁剪后的照片
+     *  还原，cropImage为nil
+     **/
     func cropImageComplete(_ row: Int , cropImage: UIImage?)
     
     /// 设置完成按钮的状态
@@ -144,7 +150,7 @@ extension ZDPhotoPreviewController {
         case .crop:
             self.startCropImageAction()
         case .revert:
-            self.cropComplete(cropImage: nil)
+            self.revertCropImage()
         }
     }
     
@@ -182,7 +188,7 @@ extension ZDPhotoPreviewController {
     
     private func startCropImageAction() {
         if let cell = collectionView.cellForItem(at: IndexPath(row: currentIndex, section: 0)) as? ZDPhotoAssetPreviewCell , let originImage = cell.getShowImage(){
-            let cropPhotoView = ZDCropImageView(cropImage: originImage, cropRect: nil) { [weak self] image in
+            let cropPhotoView = ZDCropImageView(cropImage: originImage) { [weak self] image in
                 self?.cropComplete(cropImage: image)
             }
             cropPhotoView.frame = self.view.bounds
@@ -197,19 +203,28 @@ extension ZDPhotoPreviewController {
             return
         }
         if let cell = collectionView.cellForItem(at: IndexPath(row: currentIndex, section: 0)) as? ZDPhotoAssetPreviewCell {
-            self.delegate?.cropImageComplete(self.photoModelArr[currentIndex].row, cropImage: cropImage)
             if let image = cropImage {
+                self.delegate?.cropImageComplete(self.photoModelArr[currentIndex].row, cropImage: image)
                 cell.updateCell(image: image)
                 photoModelArr[currentIndex].cropImage = image
-            }else {
-                if photoModelArr[currentIndex].cropImage != nil {
-                    photoModelArr[currentIndex].cropImage = nil
-                    cell.updateCell(photoModelArr[currentIndex])
-                }
             }
-           
             self.bottomToolView.isShowCropImage(cropImage != nil)
         }
+    }
+    
+    private func revertCropImage() {
+        guard  currentIndex >= 0 , currentIndex < self.photoModelArr.count else {
+            return
+        }
+        self.delegate?.cropImageComplete(self.photoModelArr[currentIndex].row, cropImage: nil)
+        if let cell = collectionView.cellForItem(at: IndexPath(row: currentIndex, section: 0)) as? ZDPhotoAssetPreviewCell {
+            if photoModelArr[currentIndex].cropImage != nil {
+                photoModelArr[currentIndex].cropImage = nil
+                cell.updateCell(photoModelArr[currentIndex])
+            }
+            self.bottomToolView.isShowCropImage(false)
+        }
+       
     }
     
 }

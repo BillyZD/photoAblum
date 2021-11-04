@@ -44,12 +44,6 @@ class ZDCropRectModel: NSObject {
     
     private var touchMovePoint: CGPoint?
     
-    /// 手势缩小裁剪框时的最小大小
-    private let rectMineSize: CGSize = CGSize(width: 100, height: 100)
-    
-    /// 距离边距
-    private let edgeInset = UIEdgeInsets(top: 50 + UIDevice.APPTOPSAFEHEIGHT, left: 20, bottom: 70 + UIDevice.APPBOTTOMSAFEHEIGHT, right: 20)
-    
     override init() {
         super.init()
         self.disLink = CADisplayLink(target: self, selector: #selector(handleDisLinkAction))
@@ -90,10 +84,6 @@ extension ZDCropRectModel {
         return self.newCropRect
     }
     
-    func getCropEdgeInset() -> UIEdgeInsets {
-        return self.edgeInset
-    }
-    
     /// 销毁控制器
     func destoryTimer() {
         self.disLink.invalidate()
@@ -111,6 +101,8 @@ extension ZDCropRectModel {
     
     func setTouchMovePoint(_ point: CGPoint?) {
         self.touchMovePoint = point
+        let edgeInset = ZDCropImageManager.manager.cropMineEdgInset
+        let rectMineSize = ZDCropImageManager.manager.rectMineSize
         if let beganPoint = self.touchBeganPoint , let currentPoints = self.touchMovePoint , let position = self.getTouchPointPosition(point: beganPoint) {
             // 手指水平滑动的距离,向右>0
             let touchMoveX = currentPoints.x - beganPoint.x

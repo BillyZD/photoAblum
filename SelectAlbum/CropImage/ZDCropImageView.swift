@@ -13,9 +13,11 @@ import UIKit
  */
 class ZDCropImageView: UIView {
     
-    private var cropRectView: ZDCropRectView?
+    private let cropRectView: ZDCropRectView = ZDCropRectView(frame: UIScreen.main.bounds)
     
     private var completeHandler: ((UIImage?) -> Void)?
+    
+    private var isAutomSetZoom: Bool = false
     
     /// 设置图片的父试图View
     private let imageContainerView: UIView = {
@@ -38,8 +40,8 @@ class ZDCropImageView: UIView {
     private var scrollView: UIScrollView = {
         let scroll = UIScrollView()
         scroll.bouncesZoom = true
-        scroll.maximumZoomScale = 2.0
-        scroll.minimumZoomScale = 1.0
+        scroll.maximumZoomScale = ZDCropImageManager.manager.cropMaxZoomSale
+        scroll.minimumZoomScale = ZDCropImageManager.manager.cropMinZoomSale
         scroll.isMultipleTouchEnabled = true
         scroll.scrollsToTop = false
         scroll.alwaysBounceVertical = true
@@ -52,33 +54,30 @@ class ZDCropImageView: UIView {
     }()
     
     
-    convenience init(cropImage: UIImage ,cropRect: CGRect? = nil , completeHandler: ((UIImage?) -> Void)?) {
+    convenience init(cropImage: UIImage, completeHandler: ((UIImage?) -> Void)?) {
         self.init()
-        cropRectView = ZDCropRectView(cropRect: cropRect)
-        configMainUI()
         self.setImage(image: cropImage)
         self.completeHandler = completeHandler
         self.setViewBlock()
     }
     
-    convenience init(cropRect: CGRect? = nil , completeHandler: ((UIImage?) -> Void)?) {
+    convenience init( completeHandler: ((UIImage?) -> Void)?) {
         self.init()
-        cropRectView = ZDCropRectView(cropRect: cropRect)
-        configMainUI()
         self.completeHandler = completeHandler
-        self.setViewBlock()
+       
     }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.backgroundColor = UIColor.black
-        
+        configMainUI()
+        self.setViewBlock()
     }
     
     override func layoutSubviews() {
         super.layoutSubviews()
         self.scrollView.frame = self.bounds
-        self.cropRectView?.frame = self.bounds
+        self.cropRectView.frame = self.bounds
         self.resizeSubViews()
     }
     
@@ -87,11 +86,7 @@ class ZDCropImageView: UIView {
     }
     
     func setCropImage(cropImage: UIImage) {
-        if cropRectView == nil {
-            cropRectView = ZDCropRectView()
-            self.configMainUI()
-            self.setViewBlock()
-        }
+    
         self.setImage(image: cropImage)
        
     }
@@ -104,9 +99,8 @@ class ZDCropImageView: UIView {
 extension ZDCropImageView {
     
     private func setViewBlock() {
-        guard  cropRectView != nil else { return }
-        
-        cropRectView?.completeCropHandler = { [weak self] rect in
+      
+        cropRectView.completeCropHandler = { [weak self] rect in
             if let _rect = rect {
                 self?.getCropImage(_rect)
             }else {
@@ -116,7 +110,7 @@ extension ZDCropImageView {
             }
         }
         
-        cropRectView?.cropRectChangeHandler = { [weak self] in
+        cropRectView.cropRectChangeHandler = { [weak self] in
             guard let `self` = self else {return}
             if self.scrollView.zoomScale == self.scrollView.minimumZoomScale {
                 if self.scrollView.contentOffset == .zero{
@@ -154,12 +148,13 @@ extension ZDCropImageView {
     
     private func handleImageFullCropRect() {
         //  判断照片是否能充满裁剪框
-        guard self.cropRectView != nil , self.imageView.frame.height > 0 else { return }
-        let scale = max(self.cropRectView!.cropRect.width/self.imageView.frame.width, self.cropRectView!.cropRect.height/self.imageView.frame.height)
+        guard self.imageView.frame.height > 0 else { return }
+        let scale = max(self.cropRectView.cropRect.width/self.imageView.frame.width, self.cropRectView.cropRect.height/self.imageView.frame.height)
         if  self.scrollView.minimumZoomScale < scale , scale > 1 {
             // 将照片充满裁剪框
             self.scrollView.minimumZoomScale = scale
             self.scrollView.maximumZoomScale = scale * 2
+            self.isAutomSetZoom = true
             self.scrollView.setZoomScale(scale, animated: true)
         }
     }
@@ -184,7 +179,8 @@ extension ZDCropImageView {
     
     /// 设置scroller的contsize和contentInset,用来保证图片的移动在裁剪框内
     private func refreshScollerContentsize() {
-        if let cropRect = self.cropRectView?.cropRect , self.scrollView.frame.size.width > 0 {
+        if self.scrollView.frame.size.width > 0 {
+            let cropRect = self.cropRectView.cropRect
             // 重新设置contentsize
             let widthAdd = self.scrollView.frame.size.width - cropRect.maxX
             let heightAdd = (min(self.imageContainerView.frame.height, self.frame.height) - cropRect.height)/2
@@ -211,7 +207,10 @@ extension ZDCropImageView: UIScrollViewDelegate {
     }
     
     func scrollViewWillBeginZooming(_ scrollView: UIScrollView, with view: UIView?) {
-        scrollView.contentInset = UIEdgeInsets.zero
+        if self.isAutomSetZoom {
+            scrollView.contentInset = .zero
+            self.isAutomSetZoom = false
+        }
     }
     
     func scrollViewDidZoom(_ scrollView: UIScrollView) {
@@ -221,20 +220,19 @@ extension ZDCropImageView: UIScrollViewDelegate {
     func scrollViewDidEndZooming(_ scrollView: UIScrollView, with view: UIView?, atScale scale: CGFloat) {
         self.refreshScollerContentsize()
     }
+    
 }
 
 
 extension ZDCropImageView {
     
     private func configMainUI() {
-        guard let rectView = cropRectView else {
-            return
-        }
+       
         scrollView.delegate = self
         self.addSubview(scrollView)
         scrollView.addSubview(imageContainerView)
         imageContainerView.addSubview(imageView)
-        self.addSubview(rectView)
+        self.addSubview(cropRectView)
     }
     
     /// 设置子试图frame
@@ -274,7 +272,7 @@ extension ZDCropImageView {
     private func refreshImageContainerViewCenter() {
         let offsetX = (self.scrollView.frame.size.width > self.scrollView.contentSize.width) ? ((self.scrollView.frame.size.width - self.scrollView.contentSize.width ) * 0.5) : 0.0
         let offsetY = (self.scrollView.frame.size.height > self.scrollView.contentSize.height) ? ((self.scrollView.frame.size.height - self.scrollView.contentSize.height) * 0.5) : 0.0
-        imageContainerView.center = CGPoint(x: scrollView.contentSize.width * 0.5 + offsetX  , y: scrollView.contentSize.height * 0.5 + offsetY)
+        imageContainerView.center = CGPoint(x: scrollView.contentSize.width * 0.5 + offsetX , y: scrollView.contentSize.height * 0.5 + offsetY)
    
         
     }
