@@ -27,8 +27,6 @@ class ZDCropImageManager: NSObject {
     
     private (set) var rectMineSize = CGSize(width: 100, height: 100)
     
-    private (set) var cropMinZoomSale: CGFloat = 1.0
-    
     private (set) var cropMaxZoomSale: CGFloat = 3.0
     
     private (set) var cropMineEdgInset =  UIEdgeInsets(top: 50 + UIDevice.APPTOPSAFEHEIGHT, left: 20, bottom: 70 + UIDevice.APPBOTTOMSAFEHEIGHT, right: 20)

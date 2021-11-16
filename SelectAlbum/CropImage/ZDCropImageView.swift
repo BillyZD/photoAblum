@@ -41,7 +41,7 @@ class ZDCropImageView: UIView {
         let scroll = UIScrollView()
         scroll.bouncesZoom = true
         scroll.maximumZoomScale = ZDCropImageManager.manager.cropMaxZoomSale
-        scroll.minimumZoomScale = ZDCropImageManager.manager.cropMinZoomSale
+        scroll.minimumZoomScale = 1
         scroll.isMultipleTouchEnabled = true
         scroll.scrollsToTop = false
         scroll.alwaysBounceVertical = true
@@ -113,25 +113,16 @@ extension ZDCropImageView {
         cropRectView.cropRectChangeHandler = { [weak self] in
             guard let `self` = self else {return}
             if self.scrollView.zoomScale == self.scrollView.minimumZoomScale {
-                if self.scrollView.contentOffset == .zero{
+                UIView.animate(withDuration: 0.25) {
                     self.resizeSubViews()
-                   
-                }else {
-                    UIView.animate(withDuration: 0.25) {
-                        self.resizeSubViews()
-                    }
                 }
             }else {
                 UIView.animate(withDuration: 0.25) {
                     self.scrollView.zoomScale = self.scrollView.minimumZoomScale
                 }completion: { _ in
                     DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.2) {
-                        if self.scrollView.contentOffset == .zero{
+                        UIView.animate(withDuration: 0.5) {
                             self.resizeSubViews()
-                        }else {
-                            UIView.animate(withDuration: 0.5) {
-                                self.resizeSubViews()
-                            }
                         }
                     }
                 }
@@ -149,11 +140,17 @@ extension ZDCropImageView {
     private func handleImageFullCropRect() {
         //  判断照片是否能充满裁剪框
         guard self.imageView.frame.height > 0 else { return }
+        if self.scrollView.zoomScale != 1 {
+            self.scrollView.minimumZoomScale = 1
+            self.scrollView.setZoomScale(1, animated: false)
+            self.resizeSubViews()
+            return
+        }
         let scale = max(self.cropRectView.cropRect.width/self.imageView.frame.width, self.cropRectView.cropRect.height/self.imageView.frame.height)
         if  self.scrollView.minimumZoomScale < scale , scale > 1 {
             // 将照片充满裁剪框
             self.scrollView.minimumZoomScale = scale
-            self.scrollView.maximumZoomScale = scale * 2
+            self.scrollView.maximumZoomScale = scale * ZDCropImageManager.manager.cropMaxZoomSale
             self.isAutomSetZoom = true
             self.scrollView.setZoomScale(scale, animated: true)
         }
@@ -273,7 +270,6 @@ extension ZDCropImageView {
         let offsetX = (self.scrollView.frame.size.width > self.scrollView.contentSize.width) ? ((self.scrollView.frame.size.width - self.scrollView.contentSize.width ) * 0.5) : 0.0
         let offsetY = (self.scrollView.frame.size.height > self.scrollView.contentSize.height) ? ((self.scrollView.frame.size.height - self.scrollView.contentSize.height) * 0.5) : 0.0
         imageContainerView.center = CGPoint(x: scrollView.contentSize.width * 0.5 + offsetX , y: scrollView.contentSize.height * 0.5 + offsetY)
-   
-        
+
     }
 }
