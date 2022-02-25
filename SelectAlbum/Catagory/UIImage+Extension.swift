@@ -40,6 +40,16 @@ extension UIImage {
         }
     }
     
+    /// 获取圆形图片
+    func circularClipImage() -> UIImage? {
+        let render = UIGraphicsImageRenderer(size: self.size)
+        return render.image { cnx in
+            cnx.cgContext.addEllipse(in: CGRect(origin: .zero, size: self.size))
+            cnx.cgContext.clip()
+            self.draw(in: CGRect(origin: .zero, size: self.size))
+        }
+    }
+    
     /**
      *  向下采样 CoreGraphics CGContext
      */

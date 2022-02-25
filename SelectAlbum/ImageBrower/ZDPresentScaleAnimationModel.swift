@@ -21,7 +21,7 @@ class ZDPresentScaleAnimationModel: NSObject , UIViewControllerAnimatedTransitio
         self.startRect = rect
     }
     
-    /// 动画事件
+    /// 动画时间
     func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
         return 0.5
     }

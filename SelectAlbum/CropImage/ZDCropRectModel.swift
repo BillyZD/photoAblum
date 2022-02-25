@@ -169,7 +169,12 @@ extension ZDCropRectModel {
             
         }else {
             self.oldCropRect = self.cropRect
-            self.newCropRect = self.cropRect
+            if ZDCropImageManager.manager.cropStyle == .dragScale {
+                // 重新计算裁剪框
+            }else {
+                self.newCropRect = self.cropRect
+            }
+           
         }
     }
 }

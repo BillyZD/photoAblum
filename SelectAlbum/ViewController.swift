@@ -39,6 +39,28 @@ class ViewController: UIViewController {
         self.view.backgroundColor = UIColor.white
         self.configMainUI()
         // Do any additional setup after loading the view.
+        let filed = UITextField() ; filed.borderStyle = .line
+        filed.placeholder = "输入关键字"
+        self.view.addSubview(filed)
+        filed.translatesAutoresizingMaskIntoConstraints = false
+        let vd: [String: UIView] = ["filed": filed]
+        self.view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "[filed(\(self.view.frame.size.width - 40))]", options: [], metrics: nil, views: vd))
+        self.view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-300-[filed(40)]", options: [], metrics: nil, views: vd))
+        let centerContrins = filed.centerXAnchor.constraint(equalTo: self.view.centerXAnchor, constant: 0)
+        centerContrins.isActive = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            centerContrins.constant  = -(self.view.frame.size.width - 40)/2
+            filed.transform = CGAffineTransform(scaleX: 0.1, y: 1)
+            self.view.layoutIfNeeded()
+            UIView.animate(withDuration: 5, delay: 0, options: .curveEaseInOut) {
+                centerContrins.constant = 0
+                filed.transform = CGAffineTransform(scaleX: 1, y: 1)
+                self.view.layoutIfNeeded()
+            } completion: { _ in
+                filed.transform = CGAffineTransform.identity
+            }
+
+        }
     }
     
     @objc private func clickSelectPhoto() {

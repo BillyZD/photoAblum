@@ -186,10 +186,7 @@ extension ZDCropImageView {
             self.scrollView.contentSize = CGSize(width: newWidth, height: newHight)
             // 新增滑动区域，让照片每一部分都能滑入裁剪框
             if widthAdd > 0 || heightAdd > 0 {
-//                let cropCenterY = cropRect.origin.y + cropRect.height/2
-                let offsetY: CGFloat = 0 //self.center.y - cropCenterY
-                
-                self.scrollView.contentInset = UIEdgeInsets(top: heightAdd - offsetY , left: cropRect.origin.x, bottom: offsetY, right: 0)
+                self.scrollView.contentInset = UIEdgeInsets(top: heightAdd , left: cropRect.origin.x , bottom: 0, right: 0)
             }else {
                 self.scrollView.contentInset = UIEdgeInsets.zero
             }

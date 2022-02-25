@@ -88,6 +88,11 @@ extension ZDCropToolView {
         firstButton.addTarget(self, action: #selector(clickButtonAction(button:)), for: .touchUpInside)
         secondButton.addTarget(self, action: #selector(clickButtonAction(button:)), for: .touchUpInside)
         thirdButton.addTarget(self, action: #selector(clickButtonAction(button:)), for: .touchUpInside)
+        if ZDCropImageManager.manager.cropStyle == .dragScale {
+            firstButton.isHidden = true
+            secondButton.isHidden = true
+            thirdButton.isHidden = true
+        }
     }
     
 }
